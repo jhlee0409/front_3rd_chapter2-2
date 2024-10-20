@@ -10,6 +10,10 @@ export const calculateItemTotal = (item: CartItem) => {
   return product.price * quantity * (1 - maxDiscount);
 };
 
+export const getMaxDiscount = (discounts: { quantity: number; rate: number }[]) => {
+  return discounts.reduce((max, discount) => Math.max(max, discount.rate), 0);
+};
+
 // C 계산  cart
 export const getMaxApplicableDiscount = (item: CartItem) => {
   const { product, quantity } = item;
