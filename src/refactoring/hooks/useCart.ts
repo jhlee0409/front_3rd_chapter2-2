@@ -11,7 +11,7 @@ export const useCart = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
-  //  C 계산   product
+  //  C 계산  product
   const getRemainingStock = useCallback(
     (product: Product) => {
       const cartItem = findCartItem(cart, product);
