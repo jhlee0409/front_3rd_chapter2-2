@@ -19,7 +19,7 @@ export const getMaxApplicableDiscount = (item: CartItem) => {
 };
 
 // C 계산  coupon
-const applyCouponDiscount = (total: number, coupon: Coupon) => {
+export const applyCouponDiscount = (total: number, coupon: Coupon) => {
   if (coupon.discountType === "amount") {
     return Math.max(0, total - coupon.discountValue);
   }
@@ -27,7 +27,7 @@ const applyCouponDiscount = (total: number, coupon: Coupon) => {
 };
 
 // C 계산  coupon
-const calculateTotalCouponDiscount = (before: number, after: number, coupon: Coupon) => {
+export const calculateTotalCouponDiscount = (before: number, after: number, coupon: Coupon) => {
   const totalAfterDiscount = applyCouponDiscount(after, coupon);
   return {
     totalAfterDiscount,
@@ -36,7 +36,7 @@ const calculateTotalCouponDiscount = (before: number, after: number, coupon: Cou
 };
 
 // C 계산 cart
-const calculateTotalItemDiscount = (cart: CartItem[]) => {
+export const calculateTotalItemDiscount = (cart: CartItem[]) => {
   return cart.reduce(
     ({ totalBefore, totalAfter }, current) => {
       const currentPrice = current.product.price * current.quantity;
