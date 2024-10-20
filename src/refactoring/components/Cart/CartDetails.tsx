@@ -1,14 +1,16 @@
 import { Coupon } from "../../../types";
-import { useCart } from "../../hooks";
+import { useCartContext } from "../../context/CartContex";
 import { getMaxDiscount } from "../../hooks/utils/cartUtils";
+import { Card } from "../shared";
 
 type CartDetailsProps = {
   coupons: Coupon[];
 };
 
 const CartDetails = ({ coupons }: CartDetailsProps) => {
-  const { cart, removeFromCart, updateQuantity, applyCoupon, selectedCoupon, calculateTotal } = useCart();
+  const { cart, removeFromCart, updateQuantity, applyCoupon, selectedCoupon, calculateTotal } = useCartContext();
   const { totalBeforeDiscount, totalAfterDiscount, totalDiscount } = calculateTotal();
+
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-4">장바구니 내역</h2>
@@ -52,8 +54,8 @@ const CartDetails = ({ coupons }: CartDetailsProps) => {
         })}
       </div>
 
-      <div className="mt-6 bg-white p-4 rounded shadow">
-        <h2 className="text-2xl font-semibold mb-2">쿠폰 적용</h2>
+      <Card.Container>
+        <Card.Title>쿠폰 적용</Card.Title>
         <select
           onChange={(e) => applyCoupon(coupons[parseInt(e.target.value)])}
           className="w-full p-2 border rounded mb-2"
@@ -75,16 +77,16 @@ const CartDetails = ({ coupons }: CartDetailsProps) => {
             할인)
           </p>
         )}
-      </div>
+      </Card.Container>
 
-      <div className="mt-6 bg-white p-4 rounded shadow">
-        <h2 className="text-2xl font-semibold mb-2">주문 요약</h2>
+      <Card.Container>
+        <Card.Title>주문 요약</Card.Title>
         <div className="space-y-1">
           <p>상품 금액: {totalBeforeDiscount.toLocaleString()}원</p>
           <p className="text-green-600">할인 금액: {totalDiscount.toLocaleString()}원</p>
           <p className="text-xl font-bold">최종 결제 금액: {totalAfterDiscount.toLocaleString()}원</p>
         </div>
-      </div>
+      </Card.Container>
     </div>
   );
 };
