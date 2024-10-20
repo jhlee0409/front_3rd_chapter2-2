@@ -117,7 +117,7 @@ export const AdminPage = ({ products, coupons, onProductUpdate, onProductAdd, on
           <div className="space-y-2">
             {products.map((product, index) => (
               <div key={product.id} data-testid={`product-${index + 1}`} className="bg-white p-4 rounded shadow">
-                <EditProductForm product={product} products={products} onSubmit={onProductUpdate} />
+                <EditProductForm product={product} onSubmit={onProductUpdate} />
               </div>
             ))}
           </div>
