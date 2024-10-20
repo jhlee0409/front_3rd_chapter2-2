@@ -17,10 +17,11 @@ const CouponForm = ({ onSubmit }: CouponFormProps) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setNewCoupon({ ...newCoupon, [name]: value });
+    setNewCoupon((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAddCoupon = () => {
+  const handleAddCoupon = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     onSubmit(newCoupon);
     initializeCoupon();
   };
@@ -66,11 +67,7 @@ const CouponForm = ({ onSubmit }: CouponFormProps) => {
           className="w-full p-2 border rounded"
         />
       </div>
-      <button
-        type="button"
-        onClick={handleAddCoupon}
-        className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
-      >
+      <button type="submit" className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
         쿠폰 추가
       </button>
     </form>

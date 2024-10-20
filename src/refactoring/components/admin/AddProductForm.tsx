@@ -21,7 +21,8 @@ const AddProductForm = ({ onSubmit }: AddProductFormProps) => {
     setNewProduct(initialNewProduct);
   };
 
-  const handleAddNewProduct = () => {
+  const handleAddNewProduct = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const productWithId = { ...newProduct, id: Date.now().toString() };
     onSubmit(productWithId);
     initializeProduct();
@@ -30,7 +31,7 @@ const AddProductForm = ({ onSubmit }: AddProductFormProps) => {
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setNewProduct({ ...newProduct, [name]: value });
+    setNewProduct((prev) => ({ ...prev, [name]: value }));
   }, []);
 
   return (
