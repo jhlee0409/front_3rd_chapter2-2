@@ -1,5 +1,6 @@
 import { Coupon, Product } from "../../types.ts";
-import { CartDetails, ProductList } from "./Cart";
+import { CartDetails, ProductList } from "./cart/index.ts";
+import Layout from "./shared/Layout.tsx";
 
 interface Props {
   products: Product[];
@@ -8,12 +9,12 @@ interface Props {
 
 export const CartPage = ({ products, coupons }: Props) => {
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">장바구니</h1>
+    <Layout.Container>
+      <Layout.Title>장바구니</Layout.Title>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <ProductList products={products} />
         <CartDetails coupons={coupons} />
       </div>
-    </div>
+    </Layout.Container>
   );
 };
