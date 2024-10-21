@@ -1,48 +1,24 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Product } from "../../../types";
-
-const initialNewProduct: Omit<Product, "id"> = {
-  name: "",
-  price: 0,
-  stock: 0,
-  discounts: [],
-};
+import { useAddProduct } from "../../hooks";
 
 type AddProductFormProps = {
   onSubmit: (newProduct: Product) => void;
 };
 
 const AddProductForm = ({ onSubmit }: AddProductFormProps) => {
+  const { newProduct, createProductWithId, handleChange, initializeProduct } = useAddProduct();
   const [showNewProductForm, setShowNewProductForm] = useState(false);
-  const [newProduct, setNewProduct] = useState<Omit<Product, "id">>(initialNewProduct);
-
-  // A
-  const initializeProduct = () => {
-    setNewProduct(initialNewProduct);
-  };
-
-  // C 흠
-  const createProductWithId = (product: Omit<Product, "id">, id: string) => {
-    return { ...product, id };
-  };
 
   const handleAddNewProduct = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     // C
     const productWithId = createProductWithId(newProduct, Date.now().toString());
-
     // A
     onSubmit(productWithId);
     initializeProduct();
     setShowNewProductForm(false);
   };
-
-  // A
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setNewProduct((prev) => ({ ...prev, [name]: value }));
-  }, []);
 
   // C
   const inputs = useMemo(
