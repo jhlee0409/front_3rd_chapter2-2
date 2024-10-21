@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Product } from "../../../types";
 
 const initialNewProduct: Omit<Product, "id"> = {
@@ -21,9 +21,17 @@ const AddProductForm = ({ onSubmit }: AddProductFormProps) => {
     setNewProduct(initialNewProduct);
   };
 
+  const createProductWithId = (product: Omit<Product, "id">) => {
+    return { ...product, id: Date.now().toString() };
+  };
+
   const handleAddNewProduct = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const productWithId = { ...newProduct, id: Date.now().toString() };
+
+    // C
+    const productWithId = createProductWithId(newProduct);
+
+    // A
     onSubmit(productWithId);
     initializeProduct();
     setShowNewProductForm(false);
@@ -33,6 +41,36 @@ const AddProductForm = ({ onSubmit }: AddProductFormProps) => {
     const { name, value } = e.target;
     setNewProduct((prev) => ({ ...prev, [name]: value }));
   }, []);
+
+  const inputs = useMemo(
+    () => [
+      {
+        label: "상품명",
+        name: "name",
+        type: "text",
+        id: "productName",
+        value: newProduct.name,
+        onChange: handleChange,
+      },
+      {
+        label: "가격",
+        name: "price",
+        type: "number",
+        id: "productPrice",
+        value: newProduct.price,
+        onChange: handleChange,
+      },
+      {
+        label: "재고",
+        name: "stock",
+        type: "number",
+        id: "productStock",
+        value: newProduct.stock,
+        onChange: handleChange,
+      },
+    ],
+    [],
+  );
 
   return (
     <>
@@ -45,45 +83,21 @@ const AddProductForm = ({ onSubmit }: AddProductFormProps) => {
       {showNewProductForm && (
         <form className="bg-white p-4 rounded shadow mb-4" onSubmit={handleAddNewProduct}>
           <h3 className="text-xl font-semibold mb-2">새 상품 추가</h3>
-          <div className="mb-2">
-            <label htmlFor="productName" className="block text-sm font-medium text-gray-700">
-              상품명
-            </label>
-            <input
-              id="productName"
-              type="text"
-              value={newProduct.name}
-              name="name"
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            />
-          </div>
-          <div className="mb-2">
-            <label htmlFor="productPrice" className="block text-sm font-medium text-gray-700">
-              가격
-            </label>
-            <input
-              id="productPrice"
-              type="number"
-              value={newProduct.price}
-              name="price"
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            />
-          </div>
-          <div className="mb-2">
-            <label htmlFor="productStock" className="block text-sm font-medium text-gray-700">
-              재고
-            </label>
-            <input
-              id="productStock"
-              type="number"
-              value={newProduct.stock}
-              name="stock"
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            />
-          </div>
+          {inputs.map((input) => (
+            <div className="mb-2">
+              <label htmlFor={input.id} className="block text-sm font-medium text-gray-700">
+                {input.label}
+              </label>
+              <input
+                id={input.id}
+                type={input.type}
+                value={input.value}
+                name={input.name}
+                onChange={input.onChange}
+                className="w-full p-2 border rounded"
+              />
+            </div>
+          ))}
           <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
             추가
           </button>
