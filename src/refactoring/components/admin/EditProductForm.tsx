@@ -22,6 +22,10 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
     return newSet;
   };
 
+  const createUpdatedProduct = (product: Product, updates: Partial<Product>): Product => {
+    return { ...product, ...updates };
+  };
+
   // A
   const toggleProductAccordion = (productId: string) => {
     setOpenProductIds((prev) => toggleProductSet(productId, prev));
@@ -35,7 +39,7 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
   // A
   const handleProductUpdate = (productId: string, newProduct: Partial<Product>) => {
     if (editingProduct && editingProduct.id === productId) {
-      setEditingProduct({ ...editingProduct, ...newProduct });
+      setEditingProduct(createUpdatedProduct(editingProduct, newProduct));
     }
   };
 
@@ -52,7 +56,7 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
   };
 
   return (
-    <div className="bg-white p-4 rounded shadow">
+    <>
       <button
         data-testid="toggle-button"
         onClick={() => toggleProductAccordion(product.id)}
@@ -127,7 +131,7 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
           )}
         </div>
       )}
-    </div>
+    </>
   );
 };
 
