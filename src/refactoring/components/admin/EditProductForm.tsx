@@ -11,33 +11,44 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
   const [openProductIds, setOpenProductIds] = useState<Set<string>>(new Set());
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  // No Entity
-  const toggleProductAccordion = (productId: string) => {
-    setOpenProductIds((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(productId)) {
-        newSet.delete(productId);
-      } else {
-        newSet.add(productId);
-      }
-      return newSet;
-    });
+  // C
+  const toggleProductSet = (productId: string, prevSet: Set<string>) => {
+    const newSet = new Set(prevSet);
+    if (newSet.has(productId)) {
+      newSet.delete(productId);
+    } else {
+      newSet.add(productId);
+    }
+    return newSet;
   };
 
+  // A
+  const toggleProductAccordion = (productId: string) => {
+    setOpenProductIds((prev) => toggleProductSet(productId, prev));
+  };
+
+  // A
   const handleEditProduct = (product: Product) => {
     setEditingProduct({ ...product });
   };
 
+  // A
   const handleProductUpdate = (productId: string, newProduct: Partial<Product>) => {
     if (editingProduct && editingProduct.id === productId) {
       setEditingProduct({ ...editingProduct, ...newProduct });
     }
   };
 
+  // A
+  const resetEditingProduct = () => {
+    setEditingProduct(null);
+  };
+
+  // A
   const handleEditComplete = () => {
     if (!editingProduct) return;
     onSubmit(editingProduct);
-    setEditingProduct(null);
+    resetEditingProduct();
   };
 
   return (

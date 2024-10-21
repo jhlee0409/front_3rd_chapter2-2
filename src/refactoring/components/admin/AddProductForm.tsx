@@ -17,19 +17,21 @@ const AddProductForm = ({ onSubmit }: AddProductFormProps) => {
 
   const [newProduct, setNewProduct] = useState<Omit<Product, "id">>(initialNewProduct);
 
+  // A
   const initializeProduct = () => {
     setNewProduct(initialNewProduct);
   };
 
-  const createProductWithId = (product: Omit<Product, "id">) => {
-    return { ...product, id: Date.now().toString() };
+  // C
+  const createProductWithId = (product: Omit<Product, "id">, id: string) => {
+    return { ...product, id };
   };
 
   const handleAddNewProduct = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // C
-    const productWithId = createProductWithId(newProduct);
+    const productWithId = createProductWithId(newProduct, Date.now().toString());
 
     // A
     onSubmit(productWithId);
@@ -37,11 +39,13 @@ const AddProductForm = ({ onSubmit }: AddProductFormProps) => {
     setShowNewProductForm(false);
   };
 
+  // A
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setNewProduct((prev) => ({ ...prev, [name]: value }));
   }, []);
 
+  // C
   const inputs = useMemo(
     () => [
       {
