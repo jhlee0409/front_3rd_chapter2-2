@@ -9,6 +9,7 @@ type EditProductFormProps = {
 };
 
 const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
+  const { editingProduct, handleProductUpdate, resetEditingProduct, handleEditProduct } = useEditProduct();
   const [selectedProductIds, setSelectedProductIds] = useState<Set<string>>(new Set());
 
   const toggleProductSet = (productId: string, prevSet: Set<string>) => {
@@ -25,8 +26,6 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
   const toggleProductAccordion = (productId: string) => {
     setSelectedProductIds((prev) => toggleProductSet(productId, prev));
   };
-
-  const { editingProduct, handleProductUpdate, resetEditingProduct, handleEditProduct } = useEditProduct();
 
   // A
   const handleEditComplete = () => {
@@ -75,7 +74,7 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
           {editingProduct && editingProduct.id === product.id ? (
             <div>
               {inputs.map((input) => (
-                <EditField {...input} />
+                <EditField {...input} key={input.name} />
               ))}
               {/* 할인 정보 수정 부분 */}
               <EditDiscountForm

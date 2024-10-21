@@ -27,10 +27,13 @@ export const useAddProduct = () => {
   };
 
   // A
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setNewProduct((prev) => updateProduct(prev, name, value));
-  }, []);
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      setNewProduct((prev) => updateProduct(prev, name, value));
+    },
+    [updateProduct],
+  );
 
   return { newProduct, createProductWithId, handleChange, initializeProduct };
 };
