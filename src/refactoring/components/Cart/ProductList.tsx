@@ -1,5 +1,5 @@
 import { Product } from "../../../types";
-import { useCartContext } from "../../context/CartContex";
+import { useCartContext } from "../../context/CartContext";
 import { getMaxDiscount } from "../../hooks/utils/cartUtils";
 
 type ProductListProps = {

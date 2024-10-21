@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Discount, Product } from "../../../types";
+import { removedItemByIndex } from "../../lib/array";
 
 const initialNewDiscount: Discount = { quantity: 0, rate: 0 };
 
@@ -16,17 +17,17 @@ const EditDiscountForm = ({ discounts, id, onSubmit }: EditDiscountFormProps) =>
     setNewDiscount(initialNewDiscount);
   };
 
-  const handleNewDiscount = (value: Partial<Discount>) => {
+  const handleUpdateNewDiscount = (value: Partial<Discount>) => {
     setNewDiscount((prev) => ({ ...prev, ...value }));
   };
 
-  const handleAddDiscount = (productId: string) => {
-    onSubmit(productId, { discounts: [...discounts, newDiscount] });
+  const handleAddDiscount = (productId: string, propsDiscount: Discount) => {
+    onSubmit(productId, { discounts: [...discounts, propsDiscount] });
     initializeDiscount();
   };
 
   const handleRemoveDiscount = (productId: string, index: number) => {
-    onSubmit(productId, { discounts: discounts.filter((_, i) => i !== index) });
+    onSubmit(productId, { discounts: removedItemByIndex(discounts, index) });
   };
 
   return (
@@ -51,18 +52,18 @@ const EditDiscountForm = ({ discounts, id, onSubmit }: EditDiscountFormProps) =>
             type="number"
             placeholder="수량"
             value={newDiscount.quantity}
-            onChange={(e) => handleNewDiscount({ quantity: parseInt(e.target.value) })}
+            onChange={(e) => handleUpdateNewDiscount({ quantity: parseInt(e.target.value) })}
             className="w-1/3 p-2 border rounded"
           />
           <input
             type="number"
             placeholder="할인율 (%)"
             value={newDiscount.rate * 100}
-            onChange={(e) => handleNewDiscount({ rate: parseInt(e.target.value) / 100 })}
+            onChange={(e) => handleUpdateNewDiscount({ rate: parseInt(e.target.value) / 100 })}
             className="w-1/3 p-2 border rounded"
           />
           <button
-            onClick={() => handleAddDiscount(id)}
+            onClick={() => handleAddDiscount(id, newDiscount)}
             className="w-1/3 bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
           >
             할인 추가

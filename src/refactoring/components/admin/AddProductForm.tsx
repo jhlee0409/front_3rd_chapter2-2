@@ -14,7 +14,6 @@ type AddProductFormProps = {
 
 const AddProductForm = ({ onSubmit }: AddProductFormProps) => {
   const [showNewProductForm, setShowNewProductForm] = useState(false);
-
   const [newProduct, setNewProduct] = useState<Omit<Product, "id">>(initialNewProduct);
 
   // A
@@ -22,7 +21,7 @@ const AddProductForm = ({ onSubmit }: AddProductFormProps) => {
     setNewProduct(initialNewProduct);
   };
 
-  // C
+  // C 흠
   const createProductWithId = (product: Omit<Product, "id">, id: string) => {
     return { ...product, id };
   };

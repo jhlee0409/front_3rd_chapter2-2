@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { ChangeEvent, useMemo, useState } from "react";
 import { Product } from "../../../types";
+import { createUpdatedObject } from "../../lib/object";
 import EditDiscountForm from "./EditDiscountForm";
 
 type EditProductFormProps = {
@@ -22,11 +23,6 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
     return newSet;
   };
 
-  // C
-  const createUpdatedProduct = (product: Product, updates: Partial<Product>): Product => {
-    return { ...product, ...updates };
-  };
-
   // A
   const toggleProductAccordion = (productId: string) => {
     setOpenProductIds((prev) => toggleProductSet(productId, prev));
@@ -38,9 +34,12 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
   };
 
   // A
-  const handleProductUpdate = (productId: string, newProduct: Partial<Product>) => {
+  const handleProductUpdate = (productId: string, updates: Partial<Product>) => {
     if (editingProduct && editingProduct.id === productId) {
-      setEditingProduct(createUpdatedProduct(editingProduct, newProduct));
+      setEditingProduct((prev) => {
+        if (!prev) return null;
+        return createUpdatedObject(prev, updates);
+      });
     }
   };
 
@@ -62,20 +61,20 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
         label: "상품명",
         name: "name",
         value: editingProduct?.name,
-        onChange: (e: React.ChangeEvent<HTMLInputElement>) => handleProductUpdate(product.id, { name: e.target.value }),
+        onChange: (e: ChangeEvent<HTMLInputElement>) => handleProductUpdate(product.id, { name: e.target.value }),
       },
       {
         label: "가격",
         name: "price",
         value: editingProduct?.price,
-        onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+        onChange: (e: ChangeEvent<HTMLInputElement>) =>
           handleProductUpdate(product.id, { price: parseInt(e.target.value) }),
       },
       {
         label: "재고",
         name: "stock",
         value: editingProduct?.stock,
-        onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+        onChange: (e: ChangeEvent<HTMLInputElement>) =>
           handleProductUpdate(product.id, { stock: parseInt(e.target.value) }),
       },
     ],
@@ -96,16 +95,7 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
           {editingProduct && editingProduct.id === product.id ? (
             <div>
               {inputs.map((input) => (
-                <div className="mb-4">
-                  <label className="block mb-1">{input.label}: </label>
-                  <input
-                    type="text"
-                    value={input.value}
-                    name={input.name}
-                    onChange={input.onChange}
-                    className="w-full p-2 border rounded"
-                  />
-                </div>
+                <EditField {...input} />
               ))}
               {/* 할인 정보 수정 부분 */}
               <EditDiscountForm
@@ -145,3 +135,21 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
 };
 
 export default EditProductForm;
+
+// ==========================================================================================
+
+type EditFieldProps = {
+  label: string;
+  name: string;
+  value: string | number | undefined;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+};
+
+const EditField = ({ label, name, value, onChange }: EditFieldProps) => {
+  return (
+    <div className="mb-4">
+      <label className="block mb-1">{label}: </label>
+      <input type="text" value={value} name={name} onChange={onChange} className="w-full p-2 border rounded" />
+    </div>
+  );
+};
