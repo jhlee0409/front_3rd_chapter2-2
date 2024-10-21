@@ -1,33 +1,17 @@
-import { useState } from "react";
 import { Coupon } from "../../../types";
+import { useAddCoupon } from "../../hooks";
 
-const initialNewCoupon: Coupon = {
-  name: "",
-  code: "",
-  discountType: "percentage",
-  discountValue: 0,
-};
-
-type CouponFormProps = {
+type AddCouponFormProps = {
   onSubmit: (coupon: Coupon) => void;
 };
 
-const CouponForm = ({ onSubmit }: CouponFormProps) => {
-  const [newCoupon, setNewCoupon] = useState<Coupon>(initialNewCoupon);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setNewCoupon((prev) => ({ ...prev, [name]: value }));
-  };
+const AddCouponForm = ({ onSubmit }: AddCouponFormProps) => {
+  const { newCoupon, handleChange, initializeCoupon } = useAddCoupon();
 
   const handleAddCoupon = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     onSubmit(newCoupon);
     initializeCoupon();
-  };
-
-  const initializeCoupon = () => {
-    setNewCoupon(initialNewCoupon);
   };
 
   return (
@@ -74,4 +58,4 @@ const CouponForm = ({ onSubmit }: CouponFormProps) => {
   );
 };
 
-export default CouponForm;
+export default AddCouponForm;
