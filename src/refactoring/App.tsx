@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Coupon, Product } from "../types.ts";
 import { AdminPage } from "./components/AdminPage.tsx";
 import { CartPage } from "./components/CartPage.tsx";
-import { CartContextProvider } from "./context/CartContex.tsx";
+import { CartContextProvider } from "./context/CartContext.tsx";
 import { useCoupons, useProducts } from "./hooks";
 
 const initialProducts: Product[] = [

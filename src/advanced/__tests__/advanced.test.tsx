@@ -3,7 +3,7 @@ import { useState } from "react";
 import { describe, expect, test } from "vitest";
 import { AdminPage } from "../../refactoring/components/AdminPage";
 import { CartPage } from "../../refactoring/components/CartPage";
-import { CartContextProvider } from "../../refactoring/context/CartContex";
+import { CartContexttProvider } from "../../refactoring/context/CartContext";
 import * as cartUtils from "../../refactoring/hooks/utils/cartUtils";
 import { CartItem, Coupon, Product } from "../../types";
 
@@ -76,7 +76,7 @@ describe("advanced > ", () => {
   describe("시나리오 테스트 > ", () => {
     test("장바구니 페이지 테스트 > ", async () => {
       render(<CartPage products={mockProducts} coupons={mockCoupons} />, {
-        wrapper: ({ children }) => <CartContextProvider>{children}</CartContextProvider>,
+        wrapper: ({ children }) => <CartContexttProvider>{children}</CartContexttProvider>,
       });
       const product1 = screen.getByTestId("product-p1");
       const product2 = screen.getByTestId("product-p2");
