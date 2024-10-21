@@ -35,10 +35,9 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
   };
 
   const handleEditComplete = () => {
-    if (editingProduct) {
-      onSubmit(editingProduct);
-      setEditingProduct(null);
-    }
+    if (!editingProduct) return;
+    onSubmit(editingProduct);
+    setEditingProduct(null);
   };
 
   return (
