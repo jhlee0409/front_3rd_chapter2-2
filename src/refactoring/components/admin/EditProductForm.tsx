@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Product } from "../../../types";
 import EditDiscountForm from "./EditDiscountForm";
 
@@ -22,6 +22,7 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
     return newSet;
   };
 
+  // C
   const createUpdatedProduct = (product: Product, updates: Partial<Product>): Product => {
     return { ...product, ...updates };
   };
@@ -55,6 +56,32 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
     resetEditingProduct();
   };
 
+  const inputs = useMemo(
+    () => [
+      {
+        label: "상품명",
+        name: "name",
+        value: editingProduct?.name,
+        onChange: (e: React.ChangeEvent<HTMLInputElement>) => handleProductUpdate(product.id, { name: e.target.value }),
+      },
+      {
+        label: "가격",
+        name: "price",
+        value: editingProduct?.price,
+        onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+          handleProductUpdate(product.id, { price: parseInt(e.target.value) }),
+      },
+      {
+        label: "재고",
+        name: "stock",
+        value: editingProduct?.stock,
+        onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+          handleProductUpdate(product.id, { stock: parseInt(e.target.value) }),
+      },
+    ],
+    [editingProduct, product.id],
+  );
+
   return (
     <>
       <button
@@ -68,36 +95,18 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
         <div className="mt-2">
           {editingProduct && editingProduct.id === product.id ? (
             <div>
-              <div className="mb-4">
-                <label className="block mb-1">상품명: </label>
-                <input
-                  type="text"
-                  value={editingProduct.name}
-                  name="name"
-                  onChange={(e) => handleProductUpdate(product.id, { name: e.target.value })}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block mb-1">가격: </label>
-                <input
-                  type="number"
-                  value={editingProduct.price}
-                  name="price"
-                  onChange={(e) => handleProductUpdate(product.id, { price: parseInt(e.target.value) })}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block mb-1">재고: </label>
-                <input
-                  type="number"
-                  value={editingProduct.stock}
-                  name="stock"
-                  onChange={(e) => handleProductUpdate(product.id, { stock: parseInt(e.target.value) })}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
+              {inputs.map((input) => (
+                <div className="mb-4">
+                  <label className="block mb-1">{input.label}: </label>
+                  <input
+                    type="text"
+                    value={input.value}
+                    name={input.name}
+                    onChange={input.onChange}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+              ))}
               {/* 할인 정보 수정 부분 */}
               <EditDiscountForm
                 discounts={editingProduct.discounts}
