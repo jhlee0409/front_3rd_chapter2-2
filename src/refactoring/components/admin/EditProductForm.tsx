@@ -1,6 +1,6 @@
 import { ChangeEvent, useMemo, useState } from "react";
 import { Product } from "../../../types";
-import { createUpdatedObject } from "../../lib/object";
+import { useEditProduct } from "../../hooks";
 import EditDiscountForm from "./EditDiscountForm";
 
 type EditProductFormProps = {
@@ -9,10 +9,8 @@ type EditProductFormProps = {
 };
 
 const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
-  const [openProductIds, setOpenProductIds] = useState<Set<string>>(new Set());
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [selectedProductIds, setSelectedProductIds] = useState<Set<string>>(new Set());
 
-  // C
   const toggleProductSet = (productId: string, prevSet: Set<string>) => {
     const newSet = new Set(prevSet);
     if (newSet.has(productId)) {
@@ -25,28 +23,10 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
 
   // A
   const toggleProductAccordion = (productId: string) => {
-    setOpenProductIds((prev) => toggleProductSet(productId, prev));
+    setSelectedProductIds((prev) => toggleProductSet(productId, prev));
   };
 
-  // A
-  const handleEditProduct = (product: Product) => {
-    setEditingProduct({ ...product });
-  };
-
-  // A
-  const handleProductUpdate = (productId: string, updates: Partial<Product>) => {
-    if (editingProduct && editingProduct.id === productId) {
-      setEditingProduct((prev) => {
-        if (!prev) return null;
-        return createUpdatedObject(prev, updates);
-      });
-    }
-  };
-
-  // A
-  const resetEditingProduct = () => {
-    setEditingProduct(null);
-  };
+  const { editingProduct, handleProductUpdate, resetEditingProduct, handleEditProduct } = useEditProduct();
 
   // A
   const handleEditComplete = () => {
@@ -90,7 +70,7 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
       >
         {product.name} - {product.price}원 (재고: {product.stock})
       </button>
-      {openProductIds.has(product.id) && (
+      {selectedProductIds.has(product.id) && (
         <div className="mt-2">
           {editingProduct && editingProduct.id === product.id ? (
             <div>
