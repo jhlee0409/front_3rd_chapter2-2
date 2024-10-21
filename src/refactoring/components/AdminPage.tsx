@@ -1,5 +1,5 @@
 import { Coupon, Product } from "../../types.ts";
-import { AddProductForm, CouponForm, Coupons, EditProductForm } from "./admin";
+import { AddProductForm, CouponForm, Coupons, Products } from "./admin";
 import { Layout } from "./shared";
 
 interface Props {
@@ -18,13 +18,7 @@ export const AdminPage = ({ products, coupons, onProductUpdate, onProductAdd, on
         <div>
           <h2 className="text-2xl font-semibold mb-4">상품 관리</h2>
           <AddProductForm onSubmit={onProductAdd} />
-          <div className="space-y-2">
-            {products.map((product, index) => (
-              <div key={product.id} data-testid={`product-${index + 1}`} className="bg-white p-4 rounded shadow">
-                <EditProductForm product={product} onSubmit={onProductUpdate} />
-              </div>
-            ))}
-          </div>
+          <Products products={products} onProductUpdate={onProductUpdate} />
         </div>
         <div>
           <h2 className="text-2xl font-semibold mb-4">쿠폰 관리</h2>

@@ -41,7 +41,7 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
   };
 
   return (
-    <>
+    <div className="bg-white p-4 rounded shadow">
       <button
         data-testid="toggle-button"
         onClick={() => toggleProductAccordion(product.id)}
@@ -116,7 +116,7 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
           )}
         </div>
       )}
-    </>
+    </div>
   );
 };
 
