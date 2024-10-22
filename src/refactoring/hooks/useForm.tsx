@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 type UseFormProps<T> = {
   defaultValues: T;
@@ -14,16 +14,17 @@ function useForm<T>({ defaultValues }: UseFormProps<T>) {
   const [data, setForm] = useState(defaultValues);
   const inputRefs = useRef<Map<string, InputTypes>>(new Map());
 
-  const handleSubmit = (callback: (data: T) => void, e?: React.FormEvent<HTMLFormElement>) => {
-    e?.preventDefault();
-    callback(data);
+  const convertValueByOptions = (value: string, options?: RegisterOptions) => {
+    return options?.setValueAs?.(value) ?? value;
+  };
+
+  const changedValue = (prev: T, name: string, value: string, options?: RegisterOptions) => {
+    return { ...prev, [name]: convertValueByOptions(value, options) };
   };
 
   const onChange = (e: React.ChangeEvent<InputTypes>, options?: RegisterOptions) => {
-    const valueAs = options?.setValueAs;
-
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: valueAs?.(value) ?? value }));
+    setForm((prev) => changedValue(prev, name, value, options));
   };
 
   const onBlur = (e: React.FocusEvent<InputTypes>) => {
@@ -39,22 +40,30 @@ function useForm<T>({ defaultValues }: UseFormProps<T>) {
     }
   };
 
-  const register = (name: string, options?: RegisterOptions) => {
-    return {
-      name,
-      onBlur,
-      onChange: (e: React.ChangeEvent<InputTypes>) => onChange(e, options),
-      ref: (el: InputTypes | null) => setRef(name, el),
-    };
-  };
-
   const reset = (newValues?: T, options: { keepValues?: boolean } = {}) => {
     if (!newValues) {
       setForm(defaultValues);
-      return;
+    } else {
+      setForm((prev) => (options.keepValues ? { ...prev, ...newValues } : newValues));
     }
-    setForm((prev) => (options.keepValues ? { ...prev, ...newValues } : newValues));
   };
+
+  const handleSubmit = (callback: (data: T) => void, e?: React.FormEvent<HTMLFormElement>) => {
+    e?.preventDefault();
+    callback(data);
+  };
+
+  const register = useMemo(
+    () => (name: string, options?: RegisterOptions) => {
+      return {
+        name,
+        onBlur,
+        onChange: (e: React.ChangeEvent<InputTypes>) => onChange(e, options),
+        ref: (el: InputTypes | null) => setRef(name, el),
+      };
+    },
+    [onBlur, onChange, setRef],
+  );
 
   return { data, handleSubmit, register, reset };
 }
