@@ -10,11 +10,6 @@ type EditProductFormProps = {
 
 const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
   const { data, reset, handleSubmit, register } = useForm<Product>();
-  // A
-  const handleEditComplete = () => {
-    handleSubmit(onSubmit);
-    reset();
-  };
 
   // A
   const handleProductUpdate = useCallback(
@@ -34,7 +29,9 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
         <EditContent
           data={data}
           handleProductUpdate={handleProductUpdate}
-          handleEditComplete={handleEditComplete}
+          handleEditComplete={handleSubmit(onSubmit, {
+            reset: true,
+          })}
           register={register}
         />
       ) : (

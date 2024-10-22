@@ -33,20 +33,23 @@ export const useCart = () => {
     return cart.find((item) => item.product.id === product.id);
   }, []);
 
-  //  C 계산  cart, product
-  const getUpdatedAddCart = useCallback((prevCart: CartItem[], product: Product) => {
-    return prevCart.map((item) =>
-      item.product.id === product.id
-        ? { ...item, quantity: Math.max(0, Math.min(item.quantity + 1, product.stock)) }
-        : item,
-    );
+  const getUpdatedQuantity = useCallback((item: CartItem, product: Product) => {
+    return { ...item, quantity: Math.max(0, Math.min(item.quantity + 1, product.stock)) };
   }, []);
 
-  //! C 계산 cart, coupon, 외부 의존
+  //  C 계산  cart, product
+  const getUpdatedAddCarts = useCallback(
+    (prevCart: CartItem[], product: Product) => {
+      return prevCart.map((item) => (item.product.id === product.id ? getUpdatedQuantity(item, product) : item));
+    },
+    [getUpdatedQuantity],
+  );
+
+  //! C 계산 cart, coupon, 외부 의존, 테스트가 아니었다면 파라미터를 추가해야 함
   const calculateTotal = useCallback(() => calculateCartTotal(cart, selectedCoupon), [cart, selectedCoupon]);
 
   // C 계산 cart, product
-  const addedNewCartItem = useCallback((prevCart: CartItem[], product: Product) => {
+  const getAddedNewCarts = useCallback((prevCart: CartItem[], product: Product) => {
     return [...prevCart, { product, quantity: 1 }];
   }, []);
 
@@ -54,10 +57,10 @@ export const useCart = () => {
   const updatedCart = useCallback(
     (prevCart: CartItem[], product: Product) => {
       return !!findCartItem(prevCart, product)
-        ? getUpdatedAddCart(prevCart, product)
-        : addedNewCartItem(prevCart, product);
+        ? getUpdatedAddCarts(prevCart, product)
+        : getAddedNewCarts(prevCart, product);
     },
-    [findCartItem, getUpdatedAddCart, addedNewCartItem],
+    [findCartItem, getUpdatedAddCarts, getAddedNewCarts],
   );
 
   // A 액션 coupon

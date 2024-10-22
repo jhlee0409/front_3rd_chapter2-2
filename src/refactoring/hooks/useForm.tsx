@@ -63,11 +63,14 @@ function useForm<T>(props?: UseFormProps<T>) {
   }, []);
 
   const handleSubmit = useCallback(
-    (callback: (data: T) => void, e?: React.FormEvent<HTMLFormElement>) => {
+    (callback: (data: T) => void, options?: { reset?: boolean }) => (e?: React.FormEvent<HTMLFormElement>) => {
       e?.preventDefault();
       callback(data);
+      if (options?.reset) {
+        reset();
+      }
     },
-    [data],
+    [data, reset],
   );
 
   const register = useMemo(

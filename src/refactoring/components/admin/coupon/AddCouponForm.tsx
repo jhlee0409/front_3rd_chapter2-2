@@ -14,12 +14,7 @@ type AddCouponFormProps = {
 };
 
 const AddCouponForm = ({ onSubmit }: AddCouponFormProps) => {
-  const { data, handleSubmit, register, reset } = useForm({ defaultValues: initialNewCoupon });
-
-  const handleAddCoupon = (e: React.FormEvent<HTMLFormElement>) => {
-    handleSubmit((data) => onSubmit(data), e);
-    reset();
-  };
+  const { data, handleSubmit, register } = useForm({ defaultValues: initialNewCoupon });
 
   const inputs: InputProps<Coupon>[] = useMemo(
     () => [
@@ -66,7 +61,12 @@ const AddCouponForm = ({ onSubmit }: AddCouponFormProps) => {
   );
 
   return (
-    <form className="space-y-2 mb-4" onSubmit={handleAddCoupon}>
+    <form
+      className="space-y-2 mb-4"
+      onSubmit={handleSubmit((data) => onSubmit(data), {
+        reset: true,
+      })}
+    >
       {inputs.map((input) =>
         "options" in input && input.type === "select" ? (
           <select key={input.id} className="w-full p-2 border rounded" {...input}>

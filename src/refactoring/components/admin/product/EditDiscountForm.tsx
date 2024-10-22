@@ -11,13 +11,7 @@ type EditDiscountFormProps = {
 };
 
 const EditDiscountForm = ({ discounts, id, onSubmit }: EditDiscountFormProps) => {
-  const { data, handleSubmit, register, reset } = useForm({ defaultValues: initialNewDiscount });
-
-  const handleAddDiscount = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    handleSubmit((data) => onSubmit(id, { discounts: [...discounts, data] }));
-    reset();
-  };
+  const { data, handleSubmit, register } = useForm({ defaultValues: initialNewDiscount });
 
   const Inputs: InputProps<Discount>[] = useMemo(
     () => [
@@ -34,7 +28,12 @@ const EditDiscountForm = ({ discounts, id, onSubmit }: EditDiscountFormProps) =>
   );
 
   return (
-    <form className="flex space-x-2" onSubmit={handleAddDiscount}>
+    <form
+      className="flex space-x-2"
+      onSubmit={handleSubmit((data) => onSubmit(id, { discounts: [...discounts, data] }), {
+        reset: true,
+      })}
+    >
       {Inputs.map((input) => (
         <input key={input.id} className="w-1/3 p-2 border rounded" {...input} />
       ))}

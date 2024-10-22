@@ -14,16 +14,11 @@ const initialNewProduct: Omit<Product, "id"> = {
 };
 
 const AddProductForm = ({ onSubmit }: AddProductFormProps) => {
-  const { data, handleSubmit, register, reset } = useForm({ defaultValues: initialNewProduct });
+  const { data, handleSubmit, register } = useForm({ defaultValues: initialNewProduct });
 
   const createProductWithId = useCallback((product: Omit<Product, "id">, id: string) => {
     return { ...product, id };
   }, []);
-
-  const handleAddNewProduct = (e: React.FormEvent<HTMLFormElement>) => {
-    handleSubmit((data) => onSubmit(createProductWithId(data, Date.now().toString())), e);
-    reset();
-  };
 
   // C
   const inputs: InputProps<Omit<Product, "discounts">>[] = useMemo(
@@ -54,7 +49,12 @@ const AddProductForm = ({ onSubmit }: AddProductFormProps) => {
   );
 
   return (
-    <form className="bg-white p-4 rounded shadow mb-4" onSubmit={handleAddNewProduct}>
+    <form
+      className="bg-white p-4 rounded shadow mb-4"
+      onSubmit={handleSubmit((data) => onSubmit(createProductWithId(data, Date.now().toString())), {
+        reset: true,
+      })}
+    >
       <h3 className="text-xl font-semibold mb-2">새 상품 추가</h3>
       {inputs.map((input) => (
         <div className="mb-2" key={input.name}>
