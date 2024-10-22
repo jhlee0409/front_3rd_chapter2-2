@@ -1,6 +1,7 @@
-import { ChangeEvent, useMemo, useState } from "react";
+import { ChangeEvent, useMemo } from "react";
 import { Product } from "../../../types";
 import { useEditProduct } from "../../hooks";
+import { Accordion } from "../shared";
 import EditDiscountForm from "./EditDiscountForm";
 
 type EditProductFormProps = {
@@ -10,22 +11,6 @@ type EditProductFormProps = {
 
 const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
   const { editingProduct, handleProductUpdate, resetEditingProduct, handleEditProduct } = useEditProduct();
-  const [selectedProductIds, setSelectedProductIds] = useState<Set<string>>(new Set());
-
-  const toggleProductSet = (productId: string, prevSet: Set<string>) => {
-    const newSet = new Set(prevSet);
-    if (newSet.has(productId)) {
-      newSet.delete(productId);
-    } else {
-      newSet.add(productId);
-    }
-    return newSet;
-  };
-
-  // A
-  const toggleProductAccordion = (productId: string) => {
-    setSelectedProductIds((prev) => toggleProductSet(productId, prev));
-  };
 
   // A
   const handleEditComplete = () => {
@@ -61,55 +46,57 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
   );
 
   return (
-    <>
-      <button
-        data-testid="toggle-button"
-        onClick={() => toggleProductAccordion(product.id)}
-        className="w-full text-left font-semibold"
-      >
-        {product.name} - {product.price}원 (재고: {product.stock})
-      </button>
-      {selectedProductIds.has(product.id) && (
-        <div className="mt-2">
-          {editingProduct && editingProduct.id === product.id ? (
-            <div>
-              {inputs.map((input) => (
-                <EditField {...input} key={input.name} />
-              ))}
-              {/* 할인 정보 수정 부분 */}
-              <EditDiscountForm
-                discounts={editingProduct.discounts}
-                id={editingProduct.id}
-                onSubmit={handleProductUpdate}
-              />
-              <button
-                onClick={handleEditComplete}
-                className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 mt-2"
-              >
-                수정 완료
-              </button>
-            </div>
-          ) : (
-            <div>
-              {product.discounts.map((discount, index) => (
-                <div key={index} className="mb-2">
-                  <span>
-                    {discount.quantity}개 이상 구매 시 {discount.rate * 100}% 할인
-                  </span>
+    <Accordion.Container>
+      {() => (
+        <>
+          <Accordion.Trigger>
+            <button data-testid="toggle-button" className="w-full text-left font-semibold">
+              {product.name} - {product.price}원 (재고: {product.stock})
+            </button>
+          </Accordion.Trigger>
+          <Accordion.Content>
+            <div className="mt-2">
+              {editingProduct && editingProduct.id === product.id ? (
+                <div>
+                  {inputs.map((input) => (
+                    <EditField {...input} key={input.name} />
+                  ))}
+                  {/* 할인 정보 수정 부분 */}
+                  <EditDiscountForm
+                    discounts={editingProduct.discounts}
+                    id={editingProduct.id}
+                    onSubmit={handleProductUpdate}
+                  />
+                  <button
+                    onClick={handleEditComplete}
+                    className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 mt-2"
+                  >
+                    수정 완료
+                  </button>
                 </div>
-              ))}
-              <button
-                data-testid="modify-button"
-                onClick={() => handleEditProduct(product)}
-                className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 mt-2"
-              >
-                수정
-              </button>
+              ) : (
+                <div>
+                  {product.discounts.map((discount, index) => (
+                    <div key={index} className="mb-2">
+                      <span>
+                        {discount.quantity}개 이상 구매 시 {discount.rate * 100}% 할인
+                      </span>
+                    </div>
+                  ))}
+                  <button
+                    data-testid="modify-button"
+                    onClick={() => handleEditProduct(product)}
+                    className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 mt-2"
+                  >
+                    수정
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </Accordion.Content>
+        </>
       )}
-    </>
+    </Accordion.Container>
   );
 };
 

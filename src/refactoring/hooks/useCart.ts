@@ -11,13 +11,21 @@ export const useCart = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
-  //  C 계산  product
+  //! C 계산 product 외부 의존
   const getRemainingStock = useCallback(
     (product: Product) => {
       const cartItem = findCartItem(cart, product);
       return product.stock - (cartItem?.quantity || 0);
     },
     [cart],
+  );
+
+  // C 계산 product
+  const isOutOfStock = useCallback(
+    (product: Product) => {
+      return getRemainingStock(product) <= 0;
+    },
+    [getRemainingStock],
   );
 
   //  C 계산  cart, product
@@ -34,8 +42,23 @@ export const useCart = () => {
     );
   }, []);
 
-  // C 계산 cart, coupon
+  //! C 계산 cart, coupon, 외부 의존
   const calculateTotal = useCallback(() => calculateCartTotal(cart, selectedCoupon), [cart, selectedCoupon]);
+
+  // C 계산 cart, product
+  const addedNewCartItem = useCallback((prevCart: CartItem[], product: Product) => {
+    return [...prevCart, { product, quantity: 1 }];
+  }, []);
+
+  // C 계산 cart product
+  const updatedCart = useCallback(
+    (prevCart: CartItem[], product: Product) => {
+      return !!findCartItem(prevCart, product)
+        ? getUpdatedAddCart(prevCart, product)
+        : addedNewCartItem(prevCart, product);
+    },
+    [findCartItem, getUpdatedAddCart, addedNewCartItem],
+  );
 
   // A 액션 coupon
   const applyCoupon = useCallback((coupon: Coupon) => {
@@ -48,24 +71,32 @@ export const useCart = () => {
   }, []);
 
   // A 액션 cart
-  const updateQuantity = useCallback((productId: string, newQuantity: number) => {
-    setCart((prevCart) => updateCartItemQuantity(prevCart, productId, newQuantity));
-  }, []);
+  const updateQuantity = useCallback(
+    (productId: string, newQuantity: number) => {
+      setCart((prevCart) => updateCartItemQuantity(prevCart, productId, newQuantity));
+    },
+    [updateCartItemQuantity],
+  );
+
+  // A 액션 product
+  const showWarningOutOfStock = useCallback(
+    (product: Product, { message }: { message: string }) => {
+      if (isOutOfStock(product)) {
+        alert(message);
+        return;
+      }
+    },
+    [isOutOfStock],
+  );
 
   // A 액션 cart
-  const addToCart = useCallback((product: Product) => {
-    const remainingStock = getRemainingStock(product);
-    if (remainingStock <= 0) {
-      alert("재고가 부족합니다.");
-      return;
-    }
-
-    setCart((prevCart) =>
-      !!findCartItem(prevCart, product)
-        ? getUpdatedAddCart(prevCart, product)
-        : [...prevCart, { product, quantity: 1 }],
-    );
-  }, []);
+  const addToCart = useCallback(
+    (product: Product) => {
+      showWarningOutOfStock(product, { message: "재고가 부족합니다." });
+      setCart((prevCart) => updatedCart(prevCart, product));
+    },
+    [isOutOfStock, updatedCart],
+  );
 
   return {
     cart,

@@ -11,19 +11,19 @@ const initialNewProduct: Omit<Product, "id"> = {
 export const useAddProduct = () => {
   const [newProduct, setNewProduct] = useState<Omit<Product, "id">>(initialNewProduct);
 
-  // A
-  const initializeProduct = () => {
-    setNewProduct(initialNewProduct);
-  };
-
-  // C 흠
+  // C 얕복
   const createProductWithId = (product: Omit<Product, "id">, id: string) => {
     return { ...product, id };
   };
 
-  // C
+  // C 얕복
   const updateProduct = (prev: Omit<Product, "id">, name: string, value: string | number): Omit<Product, "id"> => {
     return { ...prev, [name]: value };
+  };
+
+  // A
+  const initializeProduct = () => {
+    setNewProduct(initialNewProduct);
   };
 
   // A
