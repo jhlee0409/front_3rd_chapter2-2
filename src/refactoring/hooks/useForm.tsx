@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 
 type UseFormProps<T> = {
-  defaultValues: T;
+  defaultValues?: T;
 };
 
 type InputTypes = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
@@ -10,7 +10,8 @@ type RegisterOptions = {
   setValueAs?: (value: string) => string | number;
 };
 
-function useForm<T>({ defaultValues }: UseFormProps<T>) {
+function useForm<T>(props?: UseFormProps<T>) {
+  const { defaultValues = {} as T } = props ?? {};
   const [data, setForm] = useState(defaultValues);
   const inputRefs = useRef<Map<string, InputTypes>>(new Map());
 
@@ -20,6 +21,10 @@ function useForm<T>({ defaultValues }: UseFormProps<T>) {
 
   const changedValue = (prev: T, name: string, value: string, options?: RegisterOptions) => {
     return { ...prev, [name]: convertValueByOptions(value, options) };
+  };
+
+  const setValue = (name: string, value: string, options?: RegisterOptions) => {
+    setForm((prev) => changedValue(prev, name, value, options));
   };
 
   const onChange = (e: React.ChangeEvent<InputTypes>, options?: RegisterOptions) => {
@@ -42,7 +47,7 @@ function useForm<T>({ defaultValues }: UseFormProps<T>) {
 
   const reset = (newValues?: T, options: { keepValues?: boolean } = {}) => {
     if (!newValues) {
-      setForm(defaultValues);
+      setForm(defaultValues as T);
     } else {
       setForm((prev) => (options.keepValues ? { ...prev, ...newValues } : newValues));
     }
@@ -65,7 +70,7 @@ function useForm<T>({ defaultValues }: UseFormProps<T>) {
     [onBlur, onChange, setRef],
   );
 
-  return { data, handleSubmit, register, reset };
+  return { data, handleSubmit, register, reset, setValue };
 }
 
 // ========================================================

@@ -1,6 +1,7 @@
-import { ChangeEvent, useMemo } from "react";
+import { forwardRef, useCallback, useMemo } from "react";
 import { Product } from "../../../types";
-import { useEditProduct } from "../../hooks";
+import useForm, { InputProps } from "../../hooks/useForm";
+import { createUpdatedObject } from "../../lib/object";
 import { Accordion } from "../shared";
 import EditDiscountForm from "./EditDiscountForm";
 
@@ -10,39 +11,49 @@ type EditProductFormProps = {
 };
 
 const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
-  const { editingProduct, handleProductUpdate, resetEditingProduct, handleEditProduct } = useEditProduct();
+  const { data, reset, register, handleSubmit } = useForm<Product>();
 
   // A
   const handleEditComplete = () => {
-    if (!editingProduct) return;
-    onSubmit(editingProduct);
-    resetEditingProduct();
+    handleSubmit(onSubmit);
+    reset();
   };
 
-  const inputs = useMemo(
+  const handleProductUpdate = useCallback(
+    (productId: string, updates: Partial<Product>) => {
+      if (data && data.id === productId) {
+        const updatedProduct = createUpdatedObject(data, updates);
+        reset(updatedProduct);
+      }
+    },
+    [data, reset],
+  );
+
+  const inputs: InputProps<Omit<Product, "discounts">>[] = useMemo(
     () => [
       {
         label: "상품명",
-        name: "name",
-        value: editingProduct?.name,
-        onChange: (e: ChangeEvent<HTMLInputElement>) => handleProductUpdate(product.id, { name: e.target.value }),
+        id: "name",
+        type: "text",
+        value: data?.name,
+        ...register("name"),
       },
       {
         label: "가격",
-        name: "price",
-        value: editingProduct?.price,
-        onChange: (e: ChangeEvent<HTMLInputElement>) =>
-          handleProductUpdate(product.id, { price: parseInt(e.target.value) }),
+        id: "price",
+        type: "text",
+        value: data?.price,
+        ...register("price"),
       },
       {
         label: "재고",
-        name: "stock",
-        value: editingProduct?.stock,
-        onChange: (e: ChangeEvent<HTMLInputElement>) =>
-          handleProductUpdate(product.id, { stock: parseInt(e.target.value) }),
+        id: "stock",
+        type: "text",
+        value: data?.stock,
+        ...register("stock"),
       },
     ],
-    [editingProduct, product.id],
+    [data, register],
   );
 
   return (
@@ -56,19 +67,16 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
           </Accordion.Trigger>
           <Accordion.Content>
             <div className="mt-2">
-              {editingProduct && editingProduct.id === product.id ? (
+              {data && data.id === product.id ? (
                 <div>
                   {inputs.map((input) => (
                     <EditField {...input} key={input.name} />
                   ))}
                   {/* 할인 정보 수정 부분 */}
-                  <EditDiscountForm
-                    discounts={editingProduct.discounts}
-                    id={editingProduct.id}
-                    onSubmit={handleProductUpdate}
-                  />
+                  <EditDiscountForm discounts={data.discounts} id={data.id} onSubmit={handleProductUpdate} />
                   <button
                     onClick={handleEditComplete}
+                    type="button"
                     className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 mt-2"
                   >
                     수정 완료
@@ -85,7 +93,8 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
                   ))}
                   <button
                     data-testid="modify-button"
-                    onClick={() => handleEditProduct(product)}
+                    type="button"
+                    onClick={() => reset(product)}
                     className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 mt-2"
                   >
                     수정
@@ -104,18 +113,12 @@ export default EditProductForm;
 
 // ==========================================================================================
 
-type EditFieldProps = {
-  label: string;
-  name: string;
-  value: string | number | undefined;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-};
-
-const EditField = ({ label, name, value, onChange }: EditFieldProps) => {
+const EditField = forwardRef<HTMLInputElement, InputProps<Omit<Product, "discounts">>>((props, ref) => {
+  const { label } = props;
   return (
     <div className="mb-4">
       <label className="block mb-1">{label}: </label>
-      <input type="text" value={value} name={name} onChange={onChange} className="w-full p-2 border rounded" />
+      <input {...props} className="w-full p-2 border rounded" ref={ref} />
     </div>
   );
-};
+});
