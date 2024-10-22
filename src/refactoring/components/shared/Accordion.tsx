@@ -5,11 +5,16 @@ type AccordionContextType = {
   toggleAccordion: () => void;
 };
 
+type PassThroughProps = {
+  open: boolean;
+  toggle: () => void;
+};
+
 // AccordionContext
 const AccordionContext = createContext<AccordionContextType | undefined>(undefined);
 
 type AccordionProviderProps = {
-  children: ({ open, toggle }: { open: boolean; toggle: () => void }) => React.ReactNode;
+  children: React.ReactElement | ((props: PassThroughProps) => React.ReactElement);
 };
 
 // useAccordionContext
@@ -22,7 +27,7 @@ const useAccordionContext = () => {
 };
 
 type AccordionTriggerProps = {
-  children: React.ReactElement;
+  children: React.ReactElement | ((props: PassThroughProps) => React.ReactElement);
 };
 
 // AccordionProvider
@@ -37,7 +42,7 @@ const AccordionProvider = ({ children }: AccordionProviderProps) => {
 
   return (
     <AccordionContext.Provider value={values}>
-      {children({ open: isOpen, toggle: toggleAccordion })}
+      {typeof children === "function" ? children({ open: isOpen, toggle: toggleAccordion }) : children}
     </AccordionContext.Provider>
   );
 };

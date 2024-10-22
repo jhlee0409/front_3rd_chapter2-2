@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 type UseFormProps<T> = {
   defaultValues?: T;
@@ -12,51 +12,63 @@ type RegisterOptions = {
 
 function useForm<T>(props?: UseFormProps<T>) {
   const { defaultValues = {} as T } = props ?? {};
-  const [data, setForm] = useState(defaultValues);
+  const [data, setForm] = useState<T>(defaultValues);
   const inputRefs = useRef<Map<string, InputTypes>>(new Map());
 
-  const convertValueByOptions = (value: string, options?: RegisterOptions) => {
+  const convertValueByOptions = useCallback((value: string, options?: RegisterOptions) => {
     return options?.setValueAs?.(value) ?? value;
-  };
+  }, []);
 
-  const changedValue = (prev: T, name: string, value: string, options?: RegisterOptions) => {
-    return { ...prev, [name]: convertValueByOptions(value, options) };
-  };
+  const changedValue = useCallback(
+    (prev: T, name: string, value: string, options?: RegisterOptions) => {
+      return { ...prev, [name]: convertValueByOptions(value, options) };
+    },
+    [convertValueByOptions],
+  );
 
-  const setValue = (name: string, value: string, options?: RegisterOptions) => {
-    setForm((prev) => changedValue(prev, name, value, options));
-  };
+  const setValue = useCallback(
+    (name: string, value: string, options?: RegisterOptions) => {
+      setForm((prev) => changedValue(prev, name, value, options));
+    },
+    [changedValue],
+  );
 
-  const onChange = (e: React.ChangeEvent<InputTypes>, options?: RegisterOptions) => {
-    const { name, value } = e.target;
-    setForm((prev) => changedValue(prev, name, value, options));
-  };
+  const onChange = useCallback(
+    (e: React.ChangeEvent<InputTypes>, options?: RegisterOptions) => {
+      const { name, value } = e.target;
+      setForm((prev) => changedValue(prev, name, value, options));
+    },
+    [changedValue],
+  );
 
-  const onBlur = (e: React.FocusEvent<InputTypes>) => {
+  const onBlur = useCallback((e: React.FocusEvent<InputTypes>) => {
     const { name } = e.target;
     inputRefs.current.get(name)?.blur();
-  };
+  }, []);
 
-  const setRef = (name: string, el: InputTypes | null) => {
+  const setRef = useCallback((name: string, el: InputTypes | null) => {
     if (el) {
       inputRefs.current.set(name, el);
     } else {
       inputRefs.current.delete(name);
     }
-  };
+  }, []);
 
-  const reset = (newValues?: T, options: { keepValues?: boolean } = {}) => {
+  const reset = useCallback((newValues?: Partial<T>, options: { keepValues?: boolean } = {}) => {
     if (!newValues) {
-      setForm(defaultValues as T);
+      setForm(defaultValues);
     } else {
-      setForm((prev) => (options.keepValues ? { ...prev, ...newValues } : newValues));
+      setForm((prev) => (options.keepValues ? { ...prev, ...newValues } : newValues) as T);
     }
-  };
+  }, []);
 
-  const handleSubmit = (callback: (data: T) => void, e?: React.FormEvent<HTMLFormElement>) => {
-    e?.preventDefault();
-    callback(data);
-  };
+  const handleSubmit = useCallback(
+    (callback: (data: T) => void, e?: React.FormEvent<HTMLFormElement>) => {
+      e?.preventDefault();
+      callback(data);
+    },
+    [data],
+  );
 
   const register = useMemo(
     () => (name: string, options?: RegisterOptions) => {
