@@ -1,53 +1,57 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { Product } from "../../../types";
-import { useAddProduct } from "../../hooks";
+import useForm, { InputProps } from "../../hooks/useForm";
 import { Accordion } from "../shared";
 
 type AddProductFormProps = {
   onSubmit: (newProduct: Product) => void;
 };
 
+const initialNewProduct: Omit<Product, "id"> = {
+  name: "",
+  price: 0,
+  stock: 0,
+  discounts: [],
+};
+
 const AddProductForm = ({ onSubmit }: AddProductFormProps) => {
-  const { newProduct, createProductWithId, handleChange, initializeProduct } = useAddProduct();
+  const { data, handleSubmit, register, reset } = useForm({ defaultValues: initialNewProduct });
+
+  const createProductWithId = useCallback((product: Omit<Product, "id">, id: string) => {
+    return { ...product, id };
+  }, []);
 
   const handleAddNewProduct = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // C
-    const productWithId = createProductWithId(newProduct, Date.now().toString());
-    // A
-    onSubmit(productWithId);
-    initializeProduct();
+    handleSubmit((data) => onSubmit(createProductWithId(data, Date.now().toString())), e);
+    reset();
   };
 
   // C
-  const inputs = useMemo(
+  const inputs: InputProps<Omit<Product, "discounts">>[] = useMemo(
     () => [
       {
         label: "상품명",
-        name: "name",
         type: "text",
         id: "productName",
-        value: newProduct.name,
-        onChange: handleChange,
+        value: data.name,
+        ...register("name"),
       },
       {
         label: "가격",
-        name: "price",
         type: "number",
         id: "productPrice",
-        value: newProduct.price,
-        onChange: handleChange,
+        value: data.price,
+        ...register("price"),
       },
       {
         label: "재고",
-        name: "stock",
         type: "number",
         id: "productStock",
-        value: newProduct.stock,
-        onChange: handleChange,
+        value: data.stock,
+        ...register("stock"),
       },
     ],
-    [newProduct, handleChange],
+    [],
   );
 
   return (
@@ -73,14 +77,7 @@ const AddProductForm = ({ onSubmit }: AddProductFormProps) => {
                   <label htmlFor={input.id} className="block text-sm font-medium text-gray-700">
                     {input.label}
                   </label>
-                  <input
-                    id={input.id}
-                    type={input.type}
-                    value={input.value}
-                    name={input.name}
-                    onChange={input.onChange}
-                    className="w-full p-2 border rounded"
-                  />
+                  <input className="w-full p-2 border rounded" {...input} />
                 </div>
               ))}
               <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
