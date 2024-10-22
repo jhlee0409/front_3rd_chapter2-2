@@ -12,19 +12,22 @@ export const useAddProduct = () => {
   const [newProduct, setNewProduct] = useState<Omit<Product, "id">>(initialNewProduct);
 
   // C 얕복
-  const createProductWithId = (product: Omit<Product, "id">, id: string) => {
+  const createProductWithId = useCallback((product: Omit<Product, "id">, id: string) => {
     return { ...product, id };
-  };
+  }, []);
 
   // C 얕복
-  const updateProduct = (prev: Omit<Product, "id">, name: string, value: string | number): Omit<Product, "id"> => {
-    return { ...prev, [name]: value };
-  };
+  const updateProduct = useCallback(
+    (prev: Omit<Product, "id">, name: string, value: string | number): Omit<Product, "id"> => {
+      return { ...prev, [name]: value };
+    },
+    [],
+  );
 
   // A
-  const initializeProduct = () => {
+  const initializeProduct = useCallback(() => {
     setNewProduct(initialNewProduct);
-  };
+  }, []);
 
   // A
   const handleChange = useCallback(

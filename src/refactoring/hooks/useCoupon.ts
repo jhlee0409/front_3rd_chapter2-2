@@ -10,9 +10,12 @@ export const useCoupons = (initialCoupons: Coupon[]) => {
   }, []);
 
   // A 액션
-  const addCoupon = (newCoupon: Coupon) => {
-    setCoupons((prevCoupons) => addedCoupons(prevCoupons, newCoupon));
-  };
+  const addCoupon = useCallback(
+    (newCoupon: Coupon) => {
+      setCoupons((prevCoupons) => addedCoupons(prevCoupons, newCoupon));
+    },
+    [addedCoupons],
+  );
 
   return { coupons, addCoupon };
 };

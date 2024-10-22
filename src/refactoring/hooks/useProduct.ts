@@ -15,14 +15,20 @@ export const useProducts = (initialProducts: Product[]) => {
   }, []);
 
   // A 액션
-  const updateProduct = (updatedProduct: Product) => {
-    setProducts((prevProducts) => updatedProducts(prevProducts, updatedProduct));
-  };
+  const updateProduct = useCallback(
+    (updatedProduct: Product) => {
+      setProducts((prevProducts) => updatedProducts(prevProducts, updatedProduct));
+    },
+    [updatedProducts],
+  );
 
   // A 액션
-  const addProduct = (newProduct: Product) => {
-    setProducts((prevProducts) => addedProducts(prevProducts, newProduct));
-  };
+  const addProduct = useCallback(
+    (newProduct: Product) => {
+      setProducts((prevProducts) => addedProducts(prevProducts, newProduct));
+    },
+    [addedProducts],
+  );
 
   return {
     products,

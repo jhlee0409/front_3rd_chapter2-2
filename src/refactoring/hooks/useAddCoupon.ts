@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Coupon } from "../../types";
 
 const initialNewCoupon: Coupon = {
@@ -12,20 +12,23 @@ export const useAddCoupon = () => {
   const [newCoupon, setNewCoupon] = useState<Coupon>(initialNewCoupon);
 
   // C 얕복
-  const updateCoupon = (prev: Coupon, name: string, value: string | number): Coupon => {
+  const updateCoupon = useCallback((prev: Coupon, name: string, value: string | number): Coupon => {
     return { ...prev, [name]: value };
-  };
+  }, []);
 
   // A
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setNewCoupon((prev) => updateCoupon(prev, name, value));
-  };
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      setNewCoupon((prev) => updateCoupon(prev, name, value));
+    },
+    [updateCoupon],
+  );
 
   // A
-  const initializeCoupon = () => {
+  const initializeCoupon = useCallback(() => {
     setNewCoupon(initialNewCoupon);
-  };
+  }, []);
 
   return { newCoupon, handleChange, initializeCoupon };
 };
