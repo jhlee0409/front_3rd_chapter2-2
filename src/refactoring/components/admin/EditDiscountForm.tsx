@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { Discount, Product } from "../../../types";
+import useForm from "../../hooks/useForm";
 import { removedItemByIndex } from "../../lib/array";
 
 const initialNewDiscount: Discount = { quantity: 0, rate: 0 };
@@ -11,19 +11,11 @@ type EditDiscountFormProps = {
 };
 
 const EditDiscountForm = ({ discounts, id, onSubmit }: EditDiscountFormProps) => {
-  const [newDiscount, setNewDiscount] = useState<Discount>(initialNewDiscount);
+  const { handleSubmit, register, reset } = useForm({ defaultValues: initialNewDiscount });
 
-  const initializeDiscount = () => {
-    setNewDiscount(initialNewDiscount);
-  };
-
-  const handleUpdateNewDiscount = (value: Partial<Discount>) => {
-    setNewDiscount((prev) => ({ ...prev, ...value }));
-  };
-
-  const handleAddDiscount = (productId: string, propsDiscount: Discount) => {
-    onSubmit(productId, { discounts: [...discounts, propsDiscount] });
-    initializeDiscount();
+  const handleAddDiscount = (productId: string, data: Discount) => {
+    onSubmit(productId, { discounts: [...discounts, data] });
+    reset();
   };
 
   const handleRemoveDiscount = (productId: string, index: number) => {
@@ -47,28 +39,20 @@ const EditDiscountForm = ({ discounts, id, onSubmit }: EditDiscountFormProps) =>
             </button>
           </div>
         ))}
-        <div className="flex space-x-2">
-          <input
-            type="number"
-            placeholder="수량"
-            value={newDiscount.quantity}
-            onChange={(e) => handleUpdateNewDiscount({ quantity: parseInt(e.target.value) })}
-            className="w-1/3 p-2 border rounded"
-          />
+        <form className="flex space-x-2" onSubmit={(e) => handleSubmit((data) => handleAddDiscount(id, data), e)}>
+          <input type="number" placeholder="수량" className="w-1/3 p-2 border rounded" {...register("quantity")} />
           <input
             type="number"
             placeholder="할인율 (%)"
-            value={newDiscount.rate * 100}
-            onChange={(e) => handleUpdateNewDiscount({ rate: parseInt(e.target.value) / 100 })}
             className="w-1/3 p-2 border rounded"
+            {...register("rate", {
+              setValueAs: (v) => parseInt(v) / 100,
+            })}
           />
-          <button
-            onClick={() => handleAddDiscount(id, newDiscount)}
-            className="w-1/3 bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-          >
+          <button type="submit" className="w-1/3 bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
             할인 추가
           </button>
-        </div>
+        </form>
       </div>
     </>
   );

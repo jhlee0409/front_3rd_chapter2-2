@@ -6,6 +6,10 @@ type UseFormProps<T> = {
 
 type InputTypes = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
+type RegisterOptions = {
+  setValueAs?: (value: string) => string | number;
+};
+
 function useForm<T>({ defaultValues }: UseFormProps<T>) {
   const [data, setForm] = useState(defaultValues);
   const inputRefs = useRef<Map<string, InputTypes>>(new Map());
@@ -15,9 +19,11 @@ function useForm<T>({ defaultValues }: UseFormProps<T>) {
     callback(data);
   };
 
-  const onChange = (e: React.ChangeEvent<InputTypes>) => {
+  const onChange = (e: React.ChangeEvent<InputTypes>, options?: RegisterOptions) => {
+    const valueAs = options?.setValueAs;
+
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: valueAs?.(value) ?? value }));
   };
 
   const onBlur = (e: React.FocusEvent<InputTypes>) => {
@@ -33,11 +39,11 @@ function useForm<T>({ defaultValues }: UseFormProps<T>) {
     }
   };
 
-  const register = (name: string) => {
+  const register = (name: string, options?: RegisterOptions) => {
     return {
       name,
       onBlur,
-      onChange,
+      onChange: (e: React.ChangeEvent<InputTypes>) => onChange(e, options),
       ref: (el: InputTypes | null) => setRef(name, el),
     };
   };
