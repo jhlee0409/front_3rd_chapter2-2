@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { Coupon } from "../../../types";
-import useForm, { InputProps } from "../../hooks/useForm";
+import { Coupon } from "../../../../types";
+import useForm, { InputProps } from "../../../hooks/useForm";
 
 const initialNewCoupon: Coupon = {
   name: "",

@@ -1,5 +1,5 @@
-import { Product } from "../../../types";
-import EditProductForm from "./EditProductForm";
+import { Product } from "../../../../types";
+import EditProductSection from "./EditProductSection";
 
 type ProductsProps = {
   products: Product[];
@@ -11,7 +11,7 @@ const Products = ({ products, onProductUpdate }: ProductsProps) => {
     <div className="space-y-2">
       {products.map((product, index) => (
         <div key={product.id} data-testid={`product-${index + 1}`} className="bg-white p-4 rounded shadow">
-          <EditProductForm product={product} onSubmit={onProductUpdate} />
+          <EditProductSection product={product} onSubmit={onProductUpdate} />
         </div>
       ))}
     </div>

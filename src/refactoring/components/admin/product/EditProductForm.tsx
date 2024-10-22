@@ -1,8 +1,7 @@
 import { forwardRef, useCallback, useMemo } from "react";
-import { Product } from "../../../types";
-import useForm, { InputProps, UseFormReturn } from "../../hooks/useForm";
-import { Accordion } from "../shared";
-import EditDiscountForm from "./EditDiscountForm";
+import { Product } from "../../../../types";
+import useForm, { InputProps, UseFormReturn } from "../../../hooks/useForm";
+import EditDiscountSection from "./EditDiscountSection";
 
 type EditProductFormProps = {
   product: Product;
@@ -30,29 +29,18 @@ const EditProductForm = ({ product, onSubmit }: EditProductFormProps) => {
   );
 
   return (
-    <Accordion.Container>
-      <>
-        <Accordion.Trigger>
-          <button data-testid="toggle-button" className="w-full text-left font-semibold">
-            {product.name} - {product.price}원 (재고: {product.stock})
-          </button>
-        </Accordion.Trigger>
-        <Accordion.Content>
-          <div className="mt-2">
-            {data && data.id === product.id ? (
-              <EditContent
-                data={data}
-                handleProductUpdate={handleProductUpdate}
-                handleEditComplete={handleEditComplete}
-                register={register}
-              />
-            ) : (
-              <ViewContent data={product} reset={reset} />
-            )}
-          </div>
-        </Accordion.Content>
-      </>
-    </Accordion.Container>
+    <div className="mt-2">
+      {data && data.id === product.id ? (
+        <EditContent
+          data={data}
+          handleProductUpdate={handleProductUpdate}
+          handleEditComplete={handleEditComplete}
+          register={register}
+        />
+      ) : (
+        <ViewContent data={product} reset={reset} />
+      )}
+    </div>
   );
 };
 
@@ -113,7 +101,7 @@ const EditContent = ({ data, handleProductUpdate, handleEditComplete, register }
   return (
     <div>
       <EditFields />
-      <EditDiscountForm discounts={data.discounts} id={data.id} onSubmit={handleProductUpdate} />
+      <EditDiscountSection discounts={data.discounts} id={data.id} onSubmit={handleProductUpdate} />
       <button
         onClick={handleEditComplete}
         type="button"

@@ -90,9 +90,10 @@ function useForm<T>(props?: UseFormProps<T>) {
 export type UseFormReturn<T> = ReturnType<typeof useForm<T>>;
 
 type BaseInputProps<T> = {
-  label: string;
+  label?: string;
   id: string;
   value: T[keyof T];
+  placeholder?: string;
 } & ReturnType<UseFormReturn<T>["register"]>;
 
 type TextInputProps<T> = BaseInputProps<T> & {

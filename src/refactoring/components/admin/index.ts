@@ -1,7 +1,4 @@
-import AddCouponForm from "./AddCouponForm";
-import AddProductForm from "./AddProductForm";
-import Coupons from "./Coupons";
-import EditProductForm from "./EditProductForm";
-import Products from "./Products";
+import CouponPanel from "./CouponPanel";
+import ProductPanel from "./ProductPanel";
 
-export { AddCouponForm, AddProductForm, Coupons, EditProductForm, Products };
+export { CouponPanel, ProductPanel };

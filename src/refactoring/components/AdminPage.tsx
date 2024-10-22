@@ -1,5 +1,6 @@
 import { Coupon, Product } from "../../types.ts";
-import { AddCouponForm, AddProductForm, Coupons, Products } from "./admin";
+import { CouponPanel, ProductPanel } from "./admin";
+
 import { Layout } from "./shared";
 
 interface Props {
@@ -15,18 +16,8 @@ export const AdminPage = ({ products, coupons, onProductUpdate, onProductAdd, on
     <Layout.Container>
       <Layout.Title>관리자 페이지</Layout.Title>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <h2 className="text-2xl font-semibold mb-4">상품 관리</h2>
-          <AddProductForm onSubmit={onProductAdd} />
-          <Products products={products} onProductUpdate={onProductUpdate} />
-        </div>
-        <div>
-          <h2 className="text-2xl font-semibold mb-4">쿠폰 관리</h2>
-          <div className="bg-white p-4 rounded shadow">
-            <AddCouponForm onSubmit={onCouponAdd} />
-            <Coupons coupons={coupons} />
-          </div>
-        </div>
+        <ProductPanel products={products} onProductUpdate={onProductUpdate} onProductAdd={onProductAdd} />
+        <CouponPanel coupons={coupons} onCouponAdd={onCouponAdd} />
       </div>
     </Layout.Container>
   );
