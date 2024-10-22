@@ -53,11 +53,28 @@ function useForm<T>({ defaultValues }: UseFormProps<T>) {
   return { data, handleSubmit, register, reset };
 }
 
+// ========================================================
+
+export type UseFormReturn<T> = ReturnType<typeof useForm<T>>;
+
+type BaseInputProps<T> = {
+  label: string;
+  id: string;
+  value: T[keyof T];
+} & ReturnType<UseFormReturn<T>["register"]>;
+
+type TextInputProps<T> = BaseInputProps<T> & {
+  type: HTMLInputElement["type"];
+};
+
+type SelectInputProps<T> = BaseInputProps<T> & {
+  type: "select";
+  options: {
+    label: string;
+    value: string;
+  }[];
+};
+
+export type InputProps<T> = TextInputProps<T> | SelectInputProps<T>;
+
 export default useForm;
-
-// ref 콜백 타입: ref 콜백 함수의 매개변수 타입을 InputTypes | null로 설정하여, null 값도 처리할 수 있도록 합니다.
-// 이는 React가 컴포넌트가 언마운트될 때 null을 전달하기 때문입니다.
-
-// setRef 함수: setRef 함수는 el이 null이 아닐 때만 Map에 ref를 저장하고, null일 경우 Map에서 해당 ref를 삭제합니다.
-
-// 이렇게 수정하면 ref 속성이 HTMLInputElement와 호환되며, 오류가 해결됩니다.
