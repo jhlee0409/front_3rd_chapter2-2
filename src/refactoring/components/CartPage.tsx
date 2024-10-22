@@ -1,5 +1,6 @@
 import { Coupon, Product } from "../../types.ts";
-import { CartDetails, ProductList } from "./cart/index.ts";
+import { CartDetails, ProductList } from "./cart";
+
 import Layout from "./shared/Layout.tsx";
 
 interface Props {
