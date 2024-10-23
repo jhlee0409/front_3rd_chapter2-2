@@ -1,7 +1,7 @@
-import { Coupon, Product } from "../../types.ts";
-import { CartDetails, ProductList } from "./cart";
+import { CartDetails, ProductList } from "@/refactoring/components/cart";
+import { Coupon, Product } from "@/types";
 
-import Layout from "./shared/Layout.tsx";
+import { Layout } from "@/refactoring/components/shared";
 
 interface Props {
   products: Product[];

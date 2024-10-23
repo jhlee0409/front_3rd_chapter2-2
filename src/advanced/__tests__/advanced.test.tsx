@@ -1,11 +1,11 @@
+import { AdminPage } from "@/refactoring/components/AdminPage";
+import { CartPage } from "@/refactoring/components/CartPage";
+import { CartContextProvider } from "@/refactoring/context/CartContext";
+import * as cartUtils from "@/refactoring/hooks/utils/cartUtils";
+import { CartItem, Coupon, Product } from "@/types";
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { useState } from "react";
 import { describe, expect, test } from "vitest";
-import { AdminPage } from "../../refactoring/components/AdminPage";
-import { CartPage } from "../../refactoring/components/CartPage";
-import { CartContextProvider } from "../../refactoring/context/CartContext";
-import * as cartUtils from "../../refactoring/hooks/utils/cartUtils";
-import { CartItem, Coupon, Product } from "../../types";
 
 const mockProducts: Product[] = [
   {

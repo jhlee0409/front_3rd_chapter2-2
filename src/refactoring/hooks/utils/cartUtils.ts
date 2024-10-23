@@ -1,4 +1,4 @@
-import { CartItem, Coupon } from "../../../types";
+import { CartItem, Coupon } from "@/types";
 
 // A / C / D 구분
 // 계층 구분

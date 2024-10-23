@@ -1,5 +1,5 @@
-import { Product } from "../../../../types";
-import { Accordion } from "../../shared";
+import { Accordion } from "@/refactoring/components/shared";
+import { Product } from "@/types";
 import EditProductForm from "./EditProductForm";
 
 type EditDiscountSectionProps = {

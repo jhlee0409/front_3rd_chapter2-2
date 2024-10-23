@@ -1,5 +1,5 @@
-import { useCartContext } from "../../../context/CartContext";
-import { Card } from "../../shared";
+import { Card } from "@/refactoring/components/shared";
+import { useCartContext } from "@/refactoring/context/CartContext";
 
 const OrderSummary = () => {
   const { calculateTotal } = useCartContext();

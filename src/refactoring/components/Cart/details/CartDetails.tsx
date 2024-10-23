@@ -1,4 +1,4 @@
-import { Coupon } from "../../../../types";
+import { Coupon } from "@/types";
 import ApplyCoupon from "./ApplyCoupon";
 import CartItems from "./CartItems";
 import OrderSummary from "./OrderSummary";

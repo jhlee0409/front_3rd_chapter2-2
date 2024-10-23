@@ -1,6 +1,6 @@
+import useForm, { InputProps, UseFormReturn } from "@/refactoring/hooks/useForm";
+import { Product } from "@/types";
 import { forwardRef, useCallback, useMemo } from "react";
-import { Product } from "../../../../types";
-import useForm, { InputProps, UseFormReturn } from "../../../hooks/useForm";
 import EditDiscountSection from "./EditDiscountSection";
 
 type EditProductFormProps = {

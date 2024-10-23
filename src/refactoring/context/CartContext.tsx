@@ -1,5 +1,5 @@
+import { useCart } from "@/refactoring/hooks";
 import { createContext, useContext, useMemo } from "react";
-import { useCart } from "../hooks";
 
 // Context Type
 type CartContextType = ReturnType<typeof useCart>;

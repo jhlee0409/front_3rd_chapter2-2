@@ -1,6 +1,6 @@
-import { Coupon } from "../../../../types";
-import { useCartContext } from "../../../context/CartContext";
-import { Card } from "../../shared";
+import { Card } from "@/refactoring/components/shared";
+import { useCartContext } from "@/refactoring/context/CartContext";
+import { Coupon } from "@/types";
 
 type ApplyCouponProps = {
   coupons: Coupon[];

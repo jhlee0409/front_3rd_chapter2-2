@@ -1,6 +1,6 @@
+import useForm, { InputProps } from "@/refactoring/hooks/useForm";
+import { Discount, Product } from "@/types";
 import { useMemo } from "react";
-import { Discount, Product } from "../../../../types";
-import useForm, { InputProps } from "../../../hooks/useForm";
 
 const initialNewDiscount: Discount = { quantity: 0, rate: 0 };
 

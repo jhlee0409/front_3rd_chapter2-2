@@ -1,4 +1,4 @@
-import { Coupon } from "../../../../types";
+import { Coupon } from "@/types";
 
 type Props = {
   coupons: Coupon[];

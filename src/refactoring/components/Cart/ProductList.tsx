@@ -1,6 +1,6 @@
-import { Product } from "../../../types";
-import { useCartContext } from "../../context/CartContext";
-import { getMaxDiscount } from "../../hooks/utils/cartUtils";
+import { useCartContext } from "@/refactoring/context/CartContext";
+import { getMaxDiscount } from "@/refactoring/hooks/utils/cartUtils";
+import { Product } from "@/types";
 
 type ProductListProps = {
   products: Product[];
@@ -8,7 +8,6 @@ type ProductListProps = {
 
 const ProductList = ({ products }: ProductListProps) => {
   const { addToCart, getRemainingStock } = useCartContext();
-
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-4">상품 목록</h2>

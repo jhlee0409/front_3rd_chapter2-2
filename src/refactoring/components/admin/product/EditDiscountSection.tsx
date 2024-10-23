@@ -1,5 +1,5 @@
-import { Discount, Product } from "../../../../types";
-import { removedItemByIndex } from "../../../lib/array";
+import { removedItemByIndex } from "@/refactoring/lib/array";
+import { Discount, Product } from "@/types";
 import EditDiscountForm from "./EditDiscountForm";
 
 type EditDiscountSectionProps = {

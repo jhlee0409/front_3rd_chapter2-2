@@ -1,7 +1,7 @@
-import { Coupon, Product } from "../../types.ts";
+import { Coupon, Product } from "@/types";
 import { CouponPanel, ProductPanel } from "./admin";
 
-import { Layout } from "./shared";
+import { Layout } from "@/refactoring/components/shared";
 
 interface Props {
   products: Product[];

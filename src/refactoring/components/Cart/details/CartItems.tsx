@@ -1,5 +1,5 @@
-import { useCartContext } from "../../../context/CartContext";
-import { getMaxDiscount } from "../../../hooks/utils/cartUtils";
+import { useCartContext } from "@/refactoring/context/CartContext";
+import { getMaxDiscount } from "@/refactoring/hooks/utils/cartUtils";
 
 const CartItems = () => {
   const { cart, removeFromCart, updateQuantity } = useCartContext();

@@ -1,6 +1,6 @@
+import useForm, { InputProps } from "@/refactoring/hooks/useForm";
+import { Product } from "@/types";
 import { useCallback, useMemo } from "react";
-import { Product } from "../../../../types";
-import useForm, { InputProps } from "../../../hooks/useForm";
 
 type AddProductFormProps = {
   onSubmit: (newProduct: Product) => void;

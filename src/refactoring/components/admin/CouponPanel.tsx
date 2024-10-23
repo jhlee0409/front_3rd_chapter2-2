@@ -1,4 +1,4 @@
-import { Coupon } from "../../../types";
+import { Coupon } from "@/types";
 import { AddCouponForm, Coupons } from "./coupon";
 
 type CouponPanelProps = {
