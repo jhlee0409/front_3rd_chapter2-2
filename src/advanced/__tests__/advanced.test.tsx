@@ -1,9 +1,10 @@
 import { AdminPage } from "@/refactoring/components/AdminPage";
 import { CartPage } from "@/refactoring/components/CartPage";
 import { CartContextProvider } from "@/refactoring/context/CartContext";
+import useForm, { UseFormReturn } from "@/refactoring/hooks/useForm";
 import useLocalStorage from "@/refactoring/hooks/useLocalStorage";
 import * as cartUtils from "@/refactoring/hooks/utils/cartUtils";
-import { CartItem, Coupon, Product } from "@/types";
+import { CartItem, Coupon, Discount, Product } from "@/types";
 import { act, fireEvent, render, renderHook, screen, within } from "@testing-library/react";
 import { useState } from "react";
 import { afterEach, describe, expect, test } from "vitest";
@@ -308,6 +309,79 @@ describe("advanced > ", () => {
         expect(localStorage.getItem("cart")).toEqual(JSON.stringify([newCartItem]));
         expect(result.current[0]).toEqual([newCartItem]);
       });
+    });
+  });
+
+  describe("2. useForm을 테스트합니다.", () => {
+    const TestForm = (
+      props: UseFormReturn<Discount> & { onSubmit: (e?: React.FormEvent<HTMLFormElement>) => void },
+    ) => {
+      const { register, data, onSubmit } = props;
+      return (
+        <form onSubmit={onSubmit}>
+          <input
+            data-testid="quantity"
+            {...register("quantity", {
+              setValueAs: (v) => parseInt(v),
+            })}
+            value={data.quantity}
+          />
+          <p data-testid="quantity-value">{data.quantity}</p>
+          <button type="submit">제출</button>
+        </form>
+      );
+    };
+
+    test("2-1. 초기 값이 잘 할당되는지 확인합니다.", () => {
+      const initialValue: Discount = { quantity: 0, rate: 0 };
+      const { result } = renderHook(() => useForm({ defaultValues: initialValue }));
+
+      expect(result.current.data).toEqual(initialValue);
+    });
+
+    test("2-2. setValue 메소드가 잘 동작하는지 확인합니다.", () => {
+      const initialValue: Discount = { quantity: 0, rate: 0 };
+      const { result } = renderHook(() => useForm({ defaultValues: initialValue }));
+
+      act(() => {
+        result.current.setValue("quantity", 10);
+      });
+      expect(result.current.data).toEqual({ quantity: 10, rate: 0 });
+    });
+
+    test("2-3. register 메소드가 잘 동작하는지 확인합니다.", () => {
+      const initialValue: Discount = { quantity: 0, rate: 0 };
+      const { result } = renderHook(() => useForm({ defaultValues: initialValue }));
+      const screen = render(<TestForm {...result.current} onSubmit={() => {}} />);
+
+      const quantityInput = screen.getByTestId("quantity");
+
+      act(() => {
+        fireEvent.change(quantityInput, { target: { value: "10" } });
+      });
+
+      expect(result.current.data).toEqual({ quantity: 10, rate: 0 });
+    });
+
+    test("2-4. handleSubmit 메소드가 잘 동작하는지 확인합니다.", () => {
+      let results: number[] = [];
+      const initialValue: Discount = { quantity: 0, rate: 0 };
+      const { result } = renderHook(() => useForm({ defaultValues: initialValue }));
+
+      const handleSubmits = result.current.handleSubmit((data) => {
+        console.log(data.quantity);
+        results.push(data.quantity);
+      });
+
+      const screen = render(<TestForm {...result.current} onSubmit={handleSubmits} />);
+      const quantityInput = screen.getByTestId("quantity");
+
+      act(() => {
+        fireEvent.change(quantityInput, { target: { value: "10" } });
+        fireEvent.click(screen.getByRole("button"));
+      });
+
+      expect(results).toEqual([10]);
     });
   });
 });

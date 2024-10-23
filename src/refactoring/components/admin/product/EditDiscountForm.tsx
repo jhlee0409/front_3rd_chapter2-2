@@ -10,16 +10,25 @@ type EditDiscountFormProps = {
   onSubmit: (productId: string, newProduct: Partial<Product>) => void;
 };
 
+const preciseMultiply = (num: number) => Math.round(num * 100);
+
 const EditDiscountForm = ({ discounts, id, onSubmit }: EditDiscountFormProps) => {
   const { data, handleSubmit, register } = useForm({ defaultValues: initialNewDiscount });
 
   const Inputs: InputProps<Discount>[] = useMemo(
     () => [
-      { type: "number", id: "quantity", value: data.quantity, placeholder: "수량", ...register("quantity") },
+      {
+        type: "number",
+        id: "quantity",
+        value: data.quantity,
+        placeholder: "수량",
+        "data-testid": "quantity",
+        ...register("quantity", { setValueAs: (v) => parseInt(v) }),
+      },
       {
         type: "number",
         id: "rate",
-        value: data.rate,
+        value: preciseMultiply(data.rate),
         placeholder: "할인율 (%)",
         ...register("rate", { setValueAs: (v) => parseInt(v) / 100 }),
       },

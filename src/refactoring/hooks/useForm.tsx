@@ -15,19 +15,19 @@ function useForm<T>(props?: UseFormProps<T>) {
   const [data, setForm] = useState<T>(defaultValues);
   const inputRefs = useRef<Map<string, InputTypes>>(new Map());
 
-  const convertValueByOptions = useCallback((value: string, options?: RegisterOptions) => {
-    return options?.setValueAs?.(value) ?? value;
+  const convertValueByOptions = useCallback((value: string | number, options?: RegisterOptions) => {
+    return options?.setValueAs?.(value.toString()) ?? value;
   }, []);
 
   const changedValue = useCallback(
-    (prev: T, name: string, value: string, options?: RegisterOptions) => {
+    (prev: T, name: string, value: string | number, options?: RegisterOptions) => {
       return { ...prev, [name]: convertValueByOptions(value, options) };
     },
     [convertValueByOptions],
   );
 
   const setValue = useCallback(
-    (name: string, value: string, options?: RegisterOptions) => {
+    (name: string, value: string | number, options?: RegisterOptions) => {
       setForm((prev) => changedValue(prev, name, value, options));
     },
     [changedValue],
