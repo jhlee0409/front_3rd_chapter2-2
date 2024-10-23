@@ -16,6 +16,7 @@ const initialNewProduct: Omit<Product, "id"> = {
 const AddProductForm = ({ onSubmit }: AddProductFormProps) => {
   const { data, handleSubmit, register } = useForm({ defaultValues: initialNewProduct });
 
+  // C
   const createProductWithId = useCallback((product: Omit<Product, "id">, id: string) => {
     return { ...product, id };
   }, []);

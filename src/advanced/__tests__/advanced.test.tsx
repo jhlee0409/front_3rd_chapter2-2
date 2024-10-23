@@ -3,6 +3,7 @@ import { CartPage } from "@/refactoring/components/CartPage";
 import { CartContextProvider } from "@/refactoring/context/CartContext";
 import useForm, { UseFormReturn } from "@/refactoring/hooks/useForm";
 import useLocalStorage from "@/refactoring/hooks/useLocalStorage";
+import useValidate from "@/refactoring/hooks/useValidate";
 import * as cartUtils from "@/refactoring/hooks/utils/cartUtils";
 import { CartItem, Coupon, Discount, Product } from "@/types";
 import { act, fireEvent, render, renderHook, screen, within } from "@testing-library/react";
@@ -384,4 +385,47 @@ describe("advanced > ", () => {
       expect(results).toEqual([10]);
     });
   });
+
+  describe("3. useValidate를 테스트합니다.", () => {
+    test("3-1. empty 메소드가 잘 동작하는지 확인합니다.", () => {
+      const { result } = renderHook(() => useValidate());
+
+      const { empty } = result.current.methods;
+
+      expect(result.current.validate("", empty)).toBe(true);
+      expect(result.current.validate(0, empty)).toBe(true);
+      expect(result.current.validate([], empty)).toBe(true);
+      expect(result.current.validate({}, empty)).toBe(true);
+      expect(result.current.validate(null, empty)).toBe(true);
+      expect(result.current.validate(undefined, empty)).toBe(true);
+
+      expect(result.current.validate(1, empty)).toBe(false);
+      expect(result.current.validate("test", empty)).toBe(false);
+      expect(result.current.validate([1, 2, 3], empty)).toBe(false);
+      expect(result.current.validate({ a: 1 }, empty)).toBe(false);
+
+      expect(result.current.errors).toBe(null);
+    });
+
+    test("3-2. strict 옵션이 true일 때 잘 동작하는지 확인합니다.", () => {
+      const { result } = renderHook(() => useValidate());
+      const { empty } = result.current.methods;
+
+      expect(result.current.validate("", empty, { strict: true })).toBe(false);
+      expect(result.current.validate(0, empty, { strict: true })).toBe(false);
+
+      expect(result.current.validate([], empty, { strict: true })).toBe(true);
+      expect(result.current.validate({}, empty, { strict: true })).toBe(true);
+      expect(result.current.validate(null, empty, { strict: true })).toBe(true);
+      expect(result.current.validate(undefined, empty, { strict: true })).toBe(true);
+
+      expect(result.current.validate(1, empty, { strict: true })).toBe(false);
+      expect(result.current.validate("test", empty, { strict: true })).toBe(false);
+      expect(result.current.validate([1, 2, 3], empty, { strict: true })).toBe(false);
+      expect(result.current.validate({ a: 1 }, empty, { strict: true })).toBe(false);
+    });
+  });
 });
+
+// const { validate, error ,methods ={ empty } } =  useValidate()
+// validate(value, empty, { strict: true })

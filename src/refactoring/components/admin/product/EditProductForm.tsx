@@ -118,19 +118,15 @@ type ViewContentProps = {
 };
 
 const ViewContent = ({ data, reset }: ViewContentProps) => {
-  const DiscountInfos = () => {
-    return data.discounts.map((discount, index) => (
-      <div key={index} className="mb-2">
-        <span>
-          {discount.quantity}개 이상 구매 시 {discount.rate * 100}% 할인
-        </span>
-      </div>
-    ));
-  };
-
   return (
     <div>
-      <DiscountInfos />
+      {data.discounts.map((discount, index) => (
+        <div key={index} className="mb-2">
+          <span>
+            {discount.quantity}개 이상 구매 시 {discount.rate * 100}% 할인
+          </span>
+        </div>
+      ))}
       <button
         data-testid="modify-button"
         type="button"
