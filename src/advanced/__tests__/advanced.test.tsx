@@ -1,11 +1,12 @@
 import { AdminPage } from "@/refactoring/components/AdminPage";
 import { CartPage } from "@/refactoring/components/CartPage";
 import { CartContextProvider } from "@/refactoring/context/CartContext";
+import useLocalStorage from "@/refactoring/hooks/useLocalStorage";
 import * as cartUtils from "@/refactoring/hooks/utils/cartUtils";
 import { CartItem, Coupon, Product } from "@/types";
-import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, renderHook, screen, within } from "@testing-library/react";
 import { useState } from "react";
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test } from "vitest";
 
 const mockProducts: Product[] = [
   {
@@ -280,11 +281,33 @@ describe("advanced > ", () => {
     });
   });
 
-  describe("자유롭게 작성해보세요.", () => {
-    test("새로운 유틸 함수를 만든 후에 테스트 코드를 작성해서 실행해보세요", () => {});
+  describe("추가된 hooks >", () => {
+    describe("1. useLocalStorage를 테스트합니다.", () => {
+      afterEach(() => {
+        localStorage.clear();
+      });
 
-    test("새로운 hook 함수르 만든 후에 테스트 코드를 작성해서 실행해보세요", () => {
-      expect(true).toBe(false);
+      test("1-1. 초기 값이 잘 할당되는지 확인합니다.", () => {
+        const initialValue: CartItem[] = [{ product: mockProducts[0], quantity: 3 }];
+
+        const { result } = renderHook(() => useLocalStorage("cart", initialValue));
+
+        expect(localStorage.getItem("cart")).toEqual(JSON.stringify(initialValue));
+        expect(result.current[0]).toEqual(initialValue);
+      });
+
+      test("1-2. setState 메소드가 잘 동작하는지 확인합니다.", () => {
+        const { result } = renderHook(() => useLocalStorage("cart", [] as CartItem[]));
+
+        const newCartItem: CartItem = { product: mockProducts[0], quantity: 3 };
+
+        act(() => {
+          result.current[1]([newCartItem]);
+        });
+
+        expect(localStorage.getItem("cart")).toEqual(JSON.stringify([newCartItem]));
+        expect(result.current[0]).toEqual([newCartItem]);
+      });
     });
   });
 });
