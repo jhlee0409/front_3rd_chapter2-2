@@ -1,52 +1,43 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
-type StorageKey = "cart" | "coupon" | "product" | "user";
-
-const storageKey: Record<StorageKey, string> = {
-  cart: "cart",
-  coupon: "coupon",
-  product: "product",
-  user: "user",
+const storeToStorage = <T>(key: string, value: T, store: Storage) => {
+  store.setItem(key, JSON.stringify(value));
 };
 
-const useLocalStorage = () => {
-  const [storage, setStorage] = useState(new Map());
-
-  const get = (key: StorageKey) => {
-    return storage.get(key);
-  };
-
-  const set = (key: StorageKey, value: string) => {
-    storage.set(key, value);
-  };
-
-  useEffect(() => {
-    const getAllLocalStorageValues = (): Record<StorageKey, any> => {
-      return Object.keys(localStorage).reduce((acc, key) => {
-        const value = localStorage.getItem(key);
-        const isValidKey = Object.values(storageKey).includes(key as StorageKey);
-        if (value !== null && isValidKey) {
-          try {
-            acc[key as StorageKey] = JSON.parse(value);
-          } catch {
-            acc[key as StorageKey] = value;
-          }
-        }
-        return acc;
-      }, {} as Record<StorageKey, any>);
-    };
-
-    const localStorageValues = new Map(Object.entries(getAllLocalStorageValues()));
-    setStorage(localStorageValues);
-
-    return () => {
-      storage.forEach((value, key) => {
-        localStorage.setItem(key, value);
-      });
-    };
-  }, []);
-
-  return { get, set, storage };
+const getFromStorage = <T>(key: string, store: Storage): T | null => {
+  const item = store.getItem(key);
+  return item ? JSON.parse(item) : null;
 };
+
+function useLocalStorage<T>(key: string, initialValue: T) {
+  const [storedValue, setStoredValue] = useState<T>(() => {
+    try {
+      const item = getFromStorage<T>(key, window.localStorage);
+      if (item) return item;
+      storeToStorage(key, initialValue, window.localStorage);
+      return initialValue;
+    } catch (error) {
+      console.error("해당 키는 로컬스토리지를 불러오는데 실패했습니다.", key, error);
+      return initialValue;
+    }
+  });
+
+  const setValue = useCallback(
+    (key: string) => (value: T | ((val: T) => T)) => {
+      try {
+        setStoredValue((prev) => {
+          const valueToStore = value instanceof Function ? value(prev) : value;
+          storeToStorage(key, valueToStore, window.localStorage);
+          return valueToStore;
+        });
+      } catch (error) {
+        console.error("해당 키로 로컬스토리지 저장에 실패했습니다", key, error);
+      }
+    },
+    [],
+  );
+
+  return [storedValue, setValue(key)] as const;
+}
 
 export default useLocalStorage;
