@@ -1,10 +1,7 @@
-import { Coupon } from "@/types";
+import { useCouponContext } from "@/refactoring/context/CouponContext";
 
-type Props = {
-  coupons: Coupon[];
-};
-
-const Coupons = ({ coupons }: Props) => {
+const Coupons = () => {
+  const { coupons } = useCouponContext();
   return (
     <div>
       <h3 className="text-lg font-semibold mb-2">현재 쿠폰 목록</h3>

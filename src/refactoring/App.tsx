@@ -2,8 +2,7 @@ import { useState } from "react";
 import { Coupon, Product } from "../types.ts";
 import { AdminPage } from "./components/AdminPage.tsx";
 import { CartPage } from "./components/CartPage.tsx";
-import { CartContextProvider, ProductContextProvider } from "./context";
-import { useCoupons } from "./hooks";
+import { CartContextProvider, CouponContextProvider, ProductContextProvider } from "./context";
 
 const initialProducts: Product[] = [
   {
@@ -48,7 +47,6 @@ const initialCoupons: Coupon[] = [
 ];
 
 const App = () => {
-  const { coupons, addCoupon } = useCoupons(initialCoupons);
   const [isAdmin, setIsAdmin] = useState(false);
 
   return (
@@ -66,13 +64,15 @@ const App = () => {
       </nav>
       <main className="container mx-auto mt-6">
         <ProductContextProvider initialProducts={initialProducts}>
-          {isAdmin ? (
-            <AdminPage coupons={coupons} onCouponAdd={addCoupon} />
-          ) : (
-            <CartContextProvider>
-              <CartPage coupons={coupons} />
-            </CartContextProvider>
-          )}
+          <CouponContextProvider initialCoupons={initialCoupons}>
+            {isAdmin ? (
+              <AdminPage />
+            ) : (
+              <CartContextProvider>
+                <CartPage />
+              </CartContextProvider>
+            )}
+          </CouponContextProvider>
         </ProductContextProvider>
       </main>
     </div>

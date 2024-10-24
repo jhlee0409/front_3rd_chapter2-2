@@ -1,3 +1,4 @@
+import { useCouponContext } from "@/refactoring/context/CouponContext";
 import useForm, { InputProps } from "@/refactoring/hooks/useForm";
 import { Coupon } from "@/types";
 import { useMemo } from "react";
@@ -9,11 +10,8 @@ const initialNewCoupon: Coupon = {
   discountValue: 0,
 };
 
-type AddCouponFormProps = {
-  onSubmit: (coupon: Coupon) => void;
-};
-
-const AddCouponForm = ({ onSubmit }: AddCouponFormProps) => {
+const AddCouponForm = () => {
+  const { addCoupon } = useCouponContext();
   const { data, handleSubmit, register } = useForm({ defaultValues: initialNewCoupon });
 
   const inputs: InputProps<Coupon>[] = useMemo(
@@ -63,7 +61,7 @@ const AddCouponForm = ({ onSubmit }: AddCouponFormProps) => {
   return (
     <form
       className="space-y-2 mb-4"
-      onSubmit={handleSubmit((data) => onSubmit(data), {
+      onSubmit={handleSubmit((data) => addCoupon(data), {
         reset: true,
       })}
     >

@@ -1,13 +1,12 @@
 import { AdminPage } from "@/refactoring/components/AdminPage";
 import { CartPage } from "@/refactoring/components/CartPage";
-import { CartContextProvider, ProductContextProvider } from "@/refactoring/context";
+import { CartContextProvider, CouponContextProvider, ProductContextProvider } from "@/refactoring/context";
 import useForm from "@/refactoring/hooks/useForm";
 import useLocalStorage from "@/refactoring/hooks/useLocalStorage";
 import useValidate from "@/refactoring/hooks/useValidate";
 import * as cartUtils from "@/refactoring/hooks/utils/cartUtils";
 import { CartItem, Coupon, Discount, Product } from "@/types";
 import { act, fireEvent, render, renderHook, screen, within } from "@testing-library/react";
-import { useState } from "react";
 import { afterEach, describe, expect, test } from "vitest";
 
 const mockProducts: Product[] = [
@@ -49,15 +48,11 @@ const mockCoupons: Coupon[] = [
 ];
 
 const TestAdminPage = () => {
-  const [coupons, setCoupons] = useState<Coupon[]>(mockCoupons);
-
-  const handleCouponAdd = (newCoupon: Coupon) => {
-    setCoupons((prevCoupons) => [...prevCoupons, newCoupon]);
-  };
-
   return (
     <ProductContextProvider initialProducts={mockProducts}>
-      <AdminPage coupons={coupons} onCouponAdd={handleCouponAdd} />
+      <CouponContextProvider initialCoupons={mockCoupons}>
+        <AdminPage />
+      </CouponContextProvider>
     </ProductContextProvider>
   );
 };
@@ -65,10 +60,12 @@ const TestAdminPage = () => {
 describe("advanced > ", () => {
   describe("시나리오 테스트 > ", () => {
     test("장바구니 페이지 테스트 > ", async () => {
-      render(<CartPage coupons={mockCoupons} />, {
+      render(<CartPage />, {
         wrapper: ({ children }) => (
           <ProductContextProvider initialProducts={mockProducts}>
-            <CartContextProvider>{children}</CartContextProvider>
+            <CouponContextProvider initialCoupons={mockCoupons}>
+              <CartContextProvider>{children}</CartContextProvider>
+            </CouponContextProvider>
           </ProductContextProvider>
         ),
       });

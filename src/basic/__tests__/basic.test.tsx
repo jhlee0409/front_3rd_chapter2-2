@@ -1,6 +1,5 @@
-import { ProductContextProvider } from "@/refactoring/context";
+import { CouponContextProvider, ProductContextProvider } from "@/refactoring/context";
 import { act, fireEvent, render, renderHook, screen, within } from "@testing-library/react";
-import { useState } from "react";
 import { describe, expect, test } from "vitest";
 import { AdminPage } from "../../refactoring/components/AdminPage";
 import { CartPage } from "../../refactoring/components/CartPage";
@@ -48,15 +47,11 @@ const mockCoupons: Coupon[] = [
 ];
 
 const TestAdminPage = () => {
-  const [coupons, setCoupons] = useState<Coupon[]>(mockCoupons);
-
-  const handleCouponAdd = (newCoupon: Coupon) => {
-    setCoupons((prevCoupons) => [...prevCoupons, newCoupon]);
-  };
-
   return (
     <ProductContextProvider initialProducts={mockProducts}>
-      <AdminPage coupons={coupons} onCouponAdd={handleCouponAdd} />
+      <CouponContextProvider initialCoupons={mockCoupons}>
+        <AdminPage />
+      </CouponContextProvider>
     </ProductContextProvider>
   );
 };
@@ -64,10 +59,12 @@ const TestAdminPage = () => {
 describe("basic > ", () => {
   describe("시나리오 테스트 > ", () => {
     test("장바구니 페이지 테스트 > ", async () => {
-      render(<CartPage coupons={mockCoupons} />, {
+      render(<CartPage />, {
         wrapper: ({ children }) => (
           <ProductContextProvider initialProducts={mockProducts}>
-            <CartContextProvider>{children}</CartContextProvider>
+            <CouponContextProvider initialCoupons={mockCoupons}>
+              <CartContextProvider>{children}</CartContextProvider>
+            </CouponContextProvider>
           </ProductContextProvider>
         ),
       });

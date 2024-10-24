@@ -1,4 +1,5 @@
 import { CartContextProvider } from "./CartContext";
+import { CouponContextProvider } from "./CouponContext";
 import { ProductContextProvider } from "./ProductContext";
 
-export { CartContextProvider, ProductContextProvider };
+export { CartContextProvider, CouponContextProvider, ProductContextProvider };
