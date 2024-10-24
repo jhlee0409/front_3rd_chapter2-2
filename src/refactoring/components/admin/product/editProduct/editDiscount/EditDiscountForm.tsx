@@ -1,19 +1,19 @@
+import { useEditProductContext } from "@/refactoring/context/EditProductContext";
 import useForm, { InputProps } from "@/refactoring/hooks/useForm";
-import { Discount, Product } from "@/types";
+import { preciseMultiply } from "@/refactoring/lib/math";
+import { Discount } from "@/types";
 import { useMemo } from "react";
 
 const initialNewDiscount: Discount = { quantity: 0, rate: 0 };
 
-type EditDiscountFormProps = {
-  discounts: Discount[];
-  id: string;
-  onSubmit: (productId: string, newProduct: Partial<Product>) => void;
-};
-
-const preciseMultiply = (num: number) => Math.round(num * 100);
-
-const EditDiscountForm = ({ discounts, id, onSubmit }: EditDiscountFormProps) => {
+const EditDiscountForm = () => {
+  const { reset, data: editedData } = useEditProductContext();
+  const { discounts: editedDiscounts } = editedData;
   const { data, handleSubmit, register } = useForm({ defaultValues: initialNewDiscount });
+
+  const handleAddDiscount = () => {
+    reset({ discounts: [...editedDiscounts, data] }, { keepValues: true });
+  };
 
   const inputs: InputProps<Discount>[] = useMemo(
     () => [
@@ -39,7 +39,7 @@ const EditDiscountForm = ({ discounts, id, onSubmit }: EditDiscountFormProps) =>
   return (
     <form
       className="flex space-x-2"
-      onSubmit={handleSubmit((data) => onSubmit(id, { discounts: [...discounts, data] }), {
+      onSubmit={handleSubmit(handleAddDiscount, {
         reset: true,
       })}
     >

@@ -1,9 +1,8 @@
+import { useEditProductContext } from "@/refactoring/context/EditProductContext";
 import { useProductContext } from "@/refactoring/context/ProductContext";
-import useForm from "@/refactoring/hooks/useForm";
 import { Product } from "@/types";
-import { useCallback } from "react";
-import { EditDiscountSection } from "../editDiscount";
 import AppliedCoupons from "./AppliedCoupons";
+import { EditDiscountSection } from "./editDiscount";
 import EditFields from "./EditFields";
 
 type EditProductFormProps = {
@@ -12,30 +11,14 @@ type EditProductFormProps = {
 
 const EditProductForm = ({ product }: EditProductFormProps) => {
   const { updateProduct } = useProductContext();
-  const { data: editedProduct, reset, handleSubmit, register } = useForm<Product>();
-
-  // A
-  const handleProductUpdate = useCallback(
-    (productId: string, updates: Partial<Product>) => {
-      if (editedProduct && editedProduct.id === productId) {
-        reset(updates, {
-          keepValues: true,
-        });
-      }
-    },
-    [editedProduct, reset],
-  );
+  const { data: editedProduct, handleSubmit } = useEditProductContext();
 
   return (
     <div className="mt-2">
       {editedProduct && editedProduct.id === product.id ? (
         <div>
-          <EditFields data={editedProduct} register={register} />
-          <EditDiscountSection
-            discounts={editedProduct.discounts}
-            id={editedProduct.id}
-            onSubmit={handleProductUpdate}
-          />
+          <EditFields />
+          <EditDiscountSection />
           <button
             onClick={() =>
               handleSubmit(updateProduct, {
@@ -49,7 +32,7 @@ const EditProductForm = ({ product }: EditProductFormProps) => {
           </button>
         </div>
       ) : (
-        <AppliedCoupons data={product} reset={reset} />
+        <AppliedCoupons data={product} />
       )}
     </div>
   );

@@ -1,12 +1,12 @@
-import { UseFormReturn } from "@/refactoring/hooks";
+import { useEditProductContext } from "@/refactoring/context/EditProductContext";
 import { Product } from "@/types";
 
 type AppliedCouponsProps = {
   data: Product;
-  reset: UseFormReturn<Product>["reset"];
 };
 
-const AppliedCoupons = ({ data, reset }: AppliedCouponsProps) => {
+const AppliedCoupons = ({ data }: AppliedCouponsProps) => {
+  const { reset } = useEditProductContext();
   return (
     <div>
       {data.discounts.map((discount, index) => (

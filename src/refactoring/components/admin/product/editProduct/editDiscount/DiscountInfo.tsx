@@ -1,12 +1,14 @@
-import { Discount } from "@/types";
+import { useEditProductContext } from "@/refactoring/context/EditProductContext";
+import { removedItemByIndex } from "@/refactoring/lib/array";
 
-type DiscountInfoProps = {
-  discounts: Discount[];
-  onDelete: (id: string, index: number) => void;
-  id: string;
-};
+const DiscountInfo = () => {
+  const { reset, data } = useEditProductContext();
+  const { discounts } = data;
 
-const DiscountInfo = ({ discounts, onDelete, id }: DiscountInfoProps) => {
+  const handleRemoveDiscount = (index: number) => {
+    reset({ discounts: removedItemByIndex(discounts, index) }, { keepValues: true });
+  };
+
   return (
     <>
       {discounts.map((discount, index) => (
@@ -15,7 +17,7 @@ const DiscountInfo = ({ discounts, onDelete, id }: DiscountInfoProps) => {
             {discount.quantity}개 이상 구매 시 {discount.rate * 100}% 할인
           </span>
           <button
-            onClick={() => onDelete(id, index)}
+            onClick={() => handleRemoveDiscount(index)}
             className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
           >
             삭제

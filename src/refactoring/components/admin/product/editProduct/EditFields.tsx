@@ -1,8 +1,11 @@
-import { InputProps, UseFormReturn } from "@/refactoring/hooks";
+import { useEditProductContext } from "@/refactoring/context/EditProductContext";
+import { InputProps } from "@/refactoring/hooks";
 import { Product } from "@/types";
 import { useMemo } from "react";
 
-const EditFields = ({ data, register }: { data: Product; register: UseFormReturn<Product>["register"] }) => {
+const EditFields = () => {
+  const { data, register } = useEditProductContext();
+
   const inputs: InputProps<Omit<Product, "discounts">>[] = useMemo(
     () => [
       {
