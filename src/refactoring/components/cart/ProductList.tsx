@@ -1,19 +1,16 @@
 import { useCartContext } from "@/refactoring/context/CartContext";
-import { getMaxDiscount } from "@/refactoring/hooks/utils/cartUtils";
-import { Product } from "@/types";
+import { useProductContext } from "@/refactoring/context/ProductContext";
+import { getMaxDiscount, getRemainingStock } from "@/refactoring/hooks/utils/cartUtils";
 
-type ProductListProps = {
-  products: Product[];
-};
-
-const ProductList = ({ products }: ProductListProps) => {
-  const { addToCart, getRemainingStock } = useCartContext();
+const ProductList = () => {
+  const { products } = useProductContext();
+  const { addToCart, cart } = useCartContext();
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-4">상품 목록</h2>
       <div className="space-y-2">
         {products.map((product) => {
-          const remainingStock = getRemainingStock(product);
+          const remainingStock = getRemainingStock(product, cart);
           return (
             <div key={product.id} data-testid={`product-${product.id}`} className="bg-white p-3 rounded shadow">
               <div className="flex justify-between items-center mb-2">

@@ -1,12 +1,9 @@
 import { Card } from "@/refactoring/components/shared";
 import { useCartContext } from "@/refactoring/context/CartContext";
-import { Coupon } from "@/types";
+import { useCouponContext } from "@/refactoring/context/CouponContext";
 
-type ApplyCouponProps = {
-  coupons: Coupon[];
-};
-
-const ApplyCoupon = ({ coupons }: ApplyCouponProps) => {
+const ApplyCoupon = () => {
+  const { coupons } = useCouponContext();
   const { applyCoupon, selectedCoupon } = useCartContext();
 
   return (
