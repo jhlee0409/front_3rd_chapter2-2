@@ -45,7 +45,7 @@ export const useCart = () => {
     [getUpdatedQuantity],
   );
 
-  //! C 계산 cart, coupon, 외부 의존, 테스트가 아니었다면 파라미터를 추가해야 함
+  //! C 계산 cart, coupon, 외부 의존, 테스트가 아니었다면 파라미터를 추가해야 함. 뭘까....
   const calculateTotal = useCallback(() => calculateCartTotal(cart, selectedCoupon), [cart, selectedCoupon]);
 
   // C 계산 cart, product

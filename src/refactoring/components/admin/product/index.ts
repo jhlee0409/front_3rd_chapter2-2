@@ -1,4 +1,5 @@
-import AddProductSection from "./AddProductSection";
-import Products from "./Products";
+import { AddProductSection } from "./addProduct";
+import { EditProductSection } from "./editProduct";
 
-export { AddProductSection, Products };
+export { AddProductSection, EditProductSection };
+

@@ -8,6 +8,7 @@ export const CartPage = () => {
       <Layout.Title>장바구니</Layout.Title>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <ProductList />
+
         <CartDetails />
       </div>
     </Layout.Container>
