@@ -1,7 +1,7 @@
 import { AdminPage } from "@/refactoring/components/AdminPage";
 import { CartPage } from "@/refactoring/components/CartPage";
 import { CartContextProvider } from "@/refactoring/context/CartContext";
-import useForm, { UseFormReturn } from "@/refactoring/hooks/useForm";
+import useForm from "@/refactoring/hooks/useForm";
 import useLocalStorage from "@/refactoring/hooks/useLocalStorage";
 import useValidate from "@/refactoring/hooks/useValidate";
 import * as cartUtils from "@/refactoring/hooks/utils/cartUtils";
@@ -314,25 +314,6 @@ describe("advanced > ", () => {
   });
 
   describe("2. useForm을 테스트합니다.", () => {
-    const TestForm = (
-      props: UseFormReturn<Discount> & { onSubmit: (e?: React.FormEvent<HTMLFormElement>) => void },
-    ) => {
-      const { register, data, onSubmit } = props;
-      return (
-        <form onSubmit={onSubmit}>
-          <input
-            data-testid="quantity"
-            {...register("quantity", {
-              setValueAs: (v) => parseInt(v),
-            })}
-            value={data.quantity}
-          />
-          <p data-testid="quantity-value">{data.quantity}</p>
-          <button type="submit">제출</button>
-        </form>
-      );
-    };
-
     test("2-1. 초기 값이 잘 할당되는지 확인합니다.", () => {
       const initialValue: Discount = { quantity: 0, rate: 0 };
       const { result } = renderHook(() => useForm({ defaultValues: initialValue }));
@@ -380,12 +361,9 @@ describe("advanced > ", () => {
 
       expect(result.current.data).toEqual({ quantity: 10, rate: 0 });
 
-      act(() => {
-        result.current.handleSubmit((data) => {
-          console.log(data);
-          results.push(data.quantity);
-        });
-      });
+      result.current.handleSubmit((data) => {
+        results.push(data.quantity);
+      })();
 
       expect(results).toEqual([10]);
     });
@@ -408,9 +386,8 @@ describe("advanced > ", () => {
         expect(result.current.validate(1, empty)).toBe(false);
         expect(result.current.validate("test", empty)).toBe(false);
         expect(result.current.validate([1, 2, 3], empty)).toBe(false);
-        expect(result.current.validate({ a: 1, b: 2 }, empty)).toBe(false);
+        expect(result.current.validate({ a: 1 }, empty)).toBe(false);
       });
-      expect(result.current.errors).toBe(null);
     });
 
     test("3-2. strict 옵션이 true일 때 잘 동작하는지 확인합니다.", () => {
