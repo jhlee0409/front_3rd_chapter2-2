@@ -1,3 +1,6 @@
+import { addItem } from "@/refactoring/lib/array";
+import { clamp } from "@/refactoring/lib/math";
+import { createUpdatedObject } from "@/refactoring/lib/object";
 import { CartItem, Coupon, Product } from "@/types";
 
 // A / C / D 구분
@@ -58,14 +61,12 @@ export const calculateTotalItemDiscount = (cart: CartItem[]) => {
   );
 };
 
-export const clamp = (min: number, value: number, max: number) => Math.max(min, Math.min(value, max));
-
 // C 계산 cart
 export const updateCartItemQuantity = (cart: CartItem[], productId: string, newQuantity: number): CartItem[] => {
   return cart
     .map((item) => {
       if (item.product.id !== productId) return item;
-      return { ...item, quantity: clamp(0, newQuantity, item.product.stock) };
+      return createUpdatedObject(item, { quantity: clamp(0, newQuantity, item.product.stock) });
     })
     .filter((item) => item.quantity > 0);
 };
@@ -85,17 +86,15 @@ export const getRemainingStock = (product: Product, cart: CartItem[]) => {
 export const isOutOfStock = (product: Product, cart: CartItem[]) => getRemainingStock(product, cart) <= 0;
 
 // C 계산 product
-export const getUpdatedQuantity = (item: CartItem, product: Product) => ({
-  ...item,
-  quantity: Math.max(0, Math.min(item.quantity + 1, product.stock)),
-});
+export const getUpdatedQuantity = (item: CartItem, product: Product) =>
+  createUpdatedObject(item, { quantity: clamp(0, item.quantity + 1, product.stock) });
 
 // C 계산 product
 export const getUpdatedAddCarts = (prevCart: CartItem[], product: Product) =>
   prevCart.map((item) => (item.product.id === product.id ? getUpdatedQuantity(item, product) : item));
 
 // C 계산 product
-export const getAddedNewCarts = (prevCart: CartItem[], product: Product) => [...prevCart, { product, quantity: 1 }];
+export const getAddedNewCarts = (prevCart: CartItem[], product: Product) => addItem(prevCart, { product, quantity: 1 });
 
 // C 계산 product
 export const updatedCart = (prevCart: CartItem[], product: Product) =>
