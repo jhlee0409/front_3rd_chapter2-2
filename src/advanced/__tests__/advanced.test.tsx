@@ -353,12 +353,13 @@ describe("advanced > ", () => {
     test("2-3. register 메소드가 잘 동작하는지 확인합니다.", () => {
       const initialValue: Discount = { quantity: 0, rate: 0 };
       const { result } = renderHook(() => useForm({ defaultValues: initialValue }));
-      const screen = render(<TestForm {...result.current} onSubmit={() => {}} />);
 
-      const quantityInput = screen.getByTestId("quantity");
+      const { onChange } = result.current.register("quantity", {
+        setValueAs: (v) => parseInt(v),
+      });
 
       act(() => {
-        fireEvent.change(quantityInput, { target: { value: "10" } });
+        onChange({ target: { value: "10", name: "quantity" } } as React.ChangeEvent<HTMLInputElement>);
       });
 
       expect(result.current.data).toEqual({ quantity: 10, rate: 0 });
@@ -369,17 +370,21 @@ describe("advanced > ", () => {
       const initialValue: Discount = { quantity: 0, rate: 0 };
       const { result } = renderHook(() => useForm({ defaultValues: initialValue }));
 
-      const handleSubmits = result.current.handleSubmit((data) => {
-        console.log(data.quantity);
-        results.push(data.quantity);
+      const { onChange } = result.current.register("quantity", {
+        setValueAs: (v) => parseInt(v),
       });
 
-      const screen = render(<TestForm {...result.current} onSubmit={handleSubmits} />);
-      const quantityInput = screen.getByTestId("quantity");
+      act(() => {
+        onChange({ target: { value: "10", name: "quantity" } } as React.ChangeEvent<HTMLInputElement>);
+      });
+
+      expect(result.current.data).toEqual({ quantity: 10, rate: 0 });
 
       act(() => {
-        fireEvent.change(quantityInput, { target: { value: "10" } });
-        fireEvent.click(screen.getByRole("button"));
+        result.current.handleSubmit((data) => {
+          console.log(data);
+          results.push(data.quantity);
+        });
       });
 
       expect(results).toEqual([10]);
@@ -392,18 +397,19 @@ describe("advanced > ", () => {
 
       const { empty } = result.current.methods;
 
-      expect(result.current.validate("", empty)).toBe(true);
-      expect(result.current.validate(0, empty)).toBe(true);
-      expect(result.current.validate([], empty)).toBe(true);
-      expect(result.current.validate({}, empty)).toBe(true);
-      expect(result.current.validate(null, empty)).toBe(true);
-      expect(result.current.validate(undefined, empty)).toBe(true);
+      act(() => {
+        expect(result.current.validate("", empty)).toBe(true);
+        expect(result.current.validate(0, empty)).toBe(true);
+        expect(result.current.validate([], empty)).toBe(true);
+        expect(result.current.validate({}, empty)).toBe(true);
+        expect(result.current.validate(null, empty)).toBe(true);
+        expect(result.current.validate(undefined, empty)).toBe(true);
 
-      expect(result.current.validate(1, empty)).toBe(false);
-      expect(result.current.validate("test", empty)).toBe(false);
-      expect(result.current.validate([1, 2, 3], empty)).toBe(false);
-      expect(result.current.validate({ a: 1 }, empty)).toBe(false);
-
+        expect(result.current.validate(1, empty)).toBe(false);
+        expect(result.current.validate("test", empty)).toBe(false);
+        expect(result.current.validate([1, 2, 3], empty)).toBe(false);
+        expect(result.current.validate({ a: 1, b: 2 }, empty)).toBe(false);
+      });
       expect(result.current.errors).toBe(null);
     });
 
@@ -411,21 +417,35 @@ describe("advanced > ", () => {
       const { result } = renderHook(() => useValidate());
       const { empty } = result.current.methods;
 
-      expect(result.current.validate("", empty, { strict: true })).toBe(false);
-      expect(result.current.validate(0, empty, { strict: true })).toBe(false);
+      act(() => {
+        expect(result.current.validate("", empty, { strict: true })).toBe(false);
+        expect(result.current.validate(0, empty, { strict: true })).toBe(false);
 
-      expect(result.current.validate([], empty, { strict: true })).toBe(true);
-      expect(result.current.validate({}, empty, { strict: true })).toBe(true);
-      expect(result.current.validate(null, empty, { strict: true })).toBe(true);
-      expect(result.current.validate(undefined, empty, { strict: true })).toBe(true);
+        expect(result.current.validate([], empty, { strict: true })).toBe(true);
+        expect(result.current.validate({}, empty, { strict: true })).toBe(true);
+        expect(result.current.validate(null, empty, { strict: true })).toBe(true);
+        expect(result.current.validate(undefined, empty, { strict: true })).toBe(true);
 
-      expect(result.current.validate(1, empty, { strict: true })).toBe(false);
-      expect(result.current.validate("test", empty, { strict: true })).toBe(false);
-      expect(result.current.validate([1, 2, 3], empty, { strict: true })).toBe(false);
-      expect(result.current.validate({ a: 1 }, empty, { strict: true })).toBe(false);
+        expect(result.current.validate(1, empty, { strict: true })).toBe(false);
+        expect(result.current.validate("test", empty, { strict: true })).toBe(false);
+        expect(result.current.validate([1, 2, 3], empty, { strict: true })).toBe(false);
+        expect(result.current.validate({ a: 1 }, empty, { strict: true })).toBe(false);
+      });
+    });
+
+    test("3-3. validate에 객체를 넘겼을 경우 잘 동작하는지 확인합니다.", () => {
+      const { result } = renderHook(() => useValidate());
+      const { empty } = result.current.methods;
+
+      act(() => {
+        expect(result.current.validate({ name: "king", age: 111 }, empty)).toBe(false);
+      });
+      expect(result.current.errors).toEqual({ name: false, age: false });
+
+      act(() => {
+        expect(result.current.validate({ name: "king", age: undefined }, empty)).toBe(false);
+      });
+      expect(result.current.errors).toEqual({ name: false, age: true });
     });
   });
 });
-
-// const { validate, error ,methods ={ empty } } =  useValidate()
-// validate(value, empty, { strict: true })

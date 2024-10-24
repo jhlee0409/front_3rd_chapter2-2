@@ -12,6 +12,10 @@ const isEmptyObject = (value: unknown) => {
   return typeof value === "object" && value !== null && Object.keys(value).length === 0;
 };
 
+const isObject = (value: unknown) => {
+  return typeof value === "object" && value !== null && !Array.isArray(value) && Object.keys(value).length > 0;
+};
+
 const isFalsy = (value: unknown) => {
   return !value;
 };
@@ -28,7 +32,7 @@ const passValidate = (
 // ============================================================================
 
 const useValidate = () => {
-  const [errors, setErrors] = useState<Record<string, boolean>[] | null>(null);
+  const [errors, setErrors] = useState<Record<string, boolean> | null>(null);
 
   const empty = (value: unknown, options: { strict?: boolean } = {}) => {
     const { strict = false } = options;
@@ -43,23 +47,23 @@ const useValidate = () => {
     const { strict = false } = options || {};
     setErrors(null);
 
-    // if (Object.keys(value).length === 0) {
-    //   return true;
-    // } else if (!empty(value)) {
-    //   const entries = Object.entries(value as Record<string, unknown>);
+    if (isObject(value) && !empty(value)) {
+      const entries = Object.entries(value as Record<string, unknown>);
 
-    //   const result = entries.map(([key, value]) => {
-    //     return { [key]: validate(value, validator, { strict }) };
-    //   });
+      const result = entries.reduce((acc, [key, value]) => {
+        acc[key] = validate(value, validator, { strict });
+        return acc;
+      }, {} as Record<string, boolean>);
 
-    //   setErrors(result);
-    //   const isPassed = result.filter((item) => !item[key]).length === 0;
-    //   return true
-    // }
+      setErrors(result);
+      const isPassed = Object.values(result).every((value) => value);
 
-    const isPassed = passValidate(value, validator, { strict });
-    setErrors(isPassed ? null : [{ [value as string]: isPassed }]);
-    return isPassed;
+      return isPassed;
+    } else {
+      const isPassed = passValidate(value, validator, { strict });
+      setErrors(isPassed ? null : { [value as string]: isPassed });
+      return isPassed;
+    }
   };
 
   return { validate, errors, methods };
