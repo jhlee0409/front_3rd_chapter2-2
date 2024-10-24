@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from "react";
+import { createUpdatedObject } from "../lib/object";
 
 type UseFormProps<T> = {
   defaultValues?: T;
@@ -10,36 +11,29 @@ type RegisterOptions = {
   setValueAs?: (value: string) => string | number;
 };
 
+// C 계산 form
+const convertValueByOptions = (value: string | number, options?: RegisterOptions) => {
+  return options?.setValueAs?.(value.toString()) ?? value;
+};
+
+// C 계산 form
+function changedValue<T>(prev: T, name: string, value: string | number, options?: RegisterOptions) {
+  return { ...prev, [name]: convertValueByOptions(value, options) };
+}
+
 function useForm<T>(props?: UseFormProps<T>) {
   const { defaultValues = {} as T } = props ?? {};
   const [data, setForm] = useState<T>(defaultValues);
   const inputRefs = useRef<Map<string, InputTypes>>(new Map());
 
-  const convertValueByOptions = useCallback((value: string | number, options?: RegisterOptions) => {
-    return options?.setValueAs?.(value.toString()) ?? value;
+  const setValue = useCallback((name: string, value: string | number, options?: RegisterOptions) => {
+    setForm((prev) => changedValue(prev, name, value, options));
   }, []);
 
-  const changedValue = useCallback(
-    (prev: T, name: string, value: string | number, options?: RegisterOptions) => {
-      return { ...prev, [name]: convertValueByOptions(value, options) };
-    },
-    [convertValueByOptions],
-  );
-
-  const setValue = useCallback(
-    (name: string, value: string | number, options?: RegisterOptions) => {
-      setForm((prev) => changedValue(prev, name, value, options));
-    },
-    [changedValue],
-  );
-
-  const onChange = useCallback(
-    (e: React.ChangeEvent<InputTypes>, options?: RegisterOptions) => {
-      const { name, value } = e.target;
-      setForm((prev) => changedValue(prev, name, value, options));
-    },
-    [changedValue],
-  );
+  const onChange = useCallback((e: React.ChangeEvent<InputTypes>, options?: RegisterOptions) => {
+    const { name, value } = e.target;
+    setForm((prev) => changedValue(prev, name, value, options));
+  }, []);
 
   const onBlur = useCallback((e: React.FocusEvent<InputTypes>) => {
     const { name } = e.target;
@@ -58,7 +52,7 @@ function useForm<T>(props?: UseFormProps<T>) {
     if (!newValues) {
       setForm(defaultValues);
     } else {
-      setForm((prev) => (options.keepValues ? { ...prev, ...newValues } : newValues) as T);
+      setForm((prev) => (options.keepValues ? createUpdatedObject(prev, newValues) : newValues) as T);
     }
   }, []);
 
@@ -88,7 +82,7 @@ function useForm<T>(props?: UseFormProps<T>) {
   return { data, handleSubmit, register, reset, setValue };
 }
 
-// ========================================================
+//  export type ==============================================================
 
 export type UseFormReturn<T> = ReturnType<typeof useForm<T>>;
 

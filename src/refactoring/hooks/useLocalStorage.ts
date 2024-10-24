@@ -1,9 +1,11 @@
 import { useCallback, useState } from "react";
 
+// C 로컬스토리지 저장
 const storeToStorage = <T>(key: string, value: T, store: Storage) => {
   store.setItem(key, JSON.stringify(value));
 };
 
+// C 로컬스토리지 불러오기
 const getFromStorage = <T>(key: string, store: Storage): T | null => {
   const item = store.getItem(key);
   return item ? JSON.parse(item) : null;

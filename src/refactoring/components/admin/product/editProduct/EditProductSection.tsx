@@ -3,7 +3,7 @@ import { useProductContext } from "@/refactoring/context/ProductContext";
 import EditProductForm from "./EditProductForm";
 
 const EditProductSection = () => {
-  const { products, updateProduct } = useProductContext();
+  const { products } = useProductContext();
   return (
     <div className="space-y-2">
       {products.map((product, index) => (
@@ -16,7 +16,7 @@ const EditProductSection = () => {
                 </button>
               </Accordion.Trigger>
               <Accordion.Content>
-                <EditProductForm product={product} onSubmit={updateProduct} />
+                <EditProductForm product={product} />
               </Accordion.Content>
             </>
           </Accordion.Container>
