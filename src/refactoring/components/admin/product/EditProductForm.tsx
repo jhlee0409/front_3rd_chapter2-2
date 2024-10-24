@@ -91,13 +91,11 @@ const EditContent = ({ data, handleProductUpdate, handleEditComplete, register }
     [data, register],
   );
 
-  const EditFields = () => {
-    return inputs.map((input) => <EditField {...input} key={input.name} />);
-  };
-
   return (
     <div>
-      <EditFields />
+      {inputs.map((input) => (
+        <EditField {...input} key={input.name} />
+      ))}
       <EditDiscountSection discounts={data.discounts} id={data.id} onSubmit={handleProductUpdate} />
       <button
         onClick={handleEditComplete}

@@ -15,7 +15,7 @@ const preciseMultiply = (num: number) => Math.round(num * 100);
 const EditDiscountForm = ({ discounts, id, onSubmit }: EditDiscountFormProps) => {
   const { data, handleSubmit, register } = useForm({ defaultValues: initialNewDiscount });
 
-  const Inputs: InputProps<Discount>[] = useMemo(
+  const inputs: InputProps<Discount>[] = useMemo(
     () => [
       {
         type: "number",
@@ -43,7 +43,7 @@ const EditDiscountForm = ({ discounts, id, onSubmit }: EditDiscountFormProps) =>
         reset: true,
       })}
     >
-      {Inputs.map((input) => (
+      {inputs.map((input) => (
         <input key={input.id} className="w-1/3 p-2 border rounded" {...input} />
       ))}
       <button type="submit" className="w-1/3 bg-blue-500 text-white p-2 rounded hover:bg-blue-600">

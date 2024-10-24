@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Coupon, Product } from "../types.ts";
 import { AdminPage } from "./components/AdminPage.tsx";
 import { CartPage } from "./components/CartPage.tsx";
-import { CartContextProvider } from "./context/CartContext.tsx";
-import { useCoupons, useProducts } from "./hooks";
+import { CartContextProvider, ProductContextProvider } from "./context";
+import { useCoupons } from "./hooks";
 
 const initialProducts: Product[] = [
   {
@@ -48,7 +48,6 @@ const initialCoupons: Coupon[] = [
 ];
 
 const App = () => {
-  const { products, updateProduct, addProduct } = useProducts(initialProducts);
   const { coupons, addCoupon } = useCoupons(initialCoupons);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -66,19 +65,15 @@ const App = () => {
         </div>
       </nav>
       <main className="container mx-auto mt-6">
-        {isAdmin ? (
-          <AdminPage
-            products={products}
-            coupons={coupons}
-            onProductUpdate={updateProduct}
-            onProductAdd={addProduct}
-            onCouponAdd={addCoupon}
-          />
-        ) : (
-          <CartContextProvider>
-            <CartPage products={products} coupons={coupons} />
-          </CartContextProvider>
-        )}
+        <ProductContextProvider initialProducts={initialProducts}>
+          {isAdmin ? (
+            <AdminPage coupons={coupons} onCouponAdd={addCoupon} />
+          ) : (
+            <CartContextProvider>
+              <CartPage coupons={coupons} />
+            </CartContextProvider>
+          )}
+        </ProductContextProvider>
       </main>
     </div>
   );

@@ -1,12 +1,9 @@
 import { Accordion } from "@/refactoring/components/shared";
-import { Product } from "@/types";
+import { useProductContext } from "@/refactoring/context/ProductContext";
 import AddProductForm from "./AddProductForm";
 
-type AddProductFormProps = {
-  onSubmit: (newProduct: Product) => void;
-};
-
-const AddProductSection = ({ onSubmit }: AddProductFormProps) => {
+const AddProductSection = () => {
+  const { addProduct } = useProductContext();
   return (
     <Accordion.Container>
       {({ open, toggle }) => (
@@ -19,7 +16,7 @@ const AddProductSection = ({ onSubmit }: AddProductFormProps) => {
           <Accordion.Content>
             <AddProductForm
               onSubmit={(newProduct) => {
-                onSubmit(newProduct);
+                addProduct(newProduct);
                 toggle();
               }}
             />

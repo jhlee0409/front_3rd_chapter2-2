@@ -1,22 +1,20 @@
-import { Coupon, Product } from "@/types";
+import { Coupon } from "@/types";
 import { CouponPanel, ProductPanel } from "./admin";
 
 import { Layout } from "@/refactoring/components/shared";
 
 interface Props {
-  products: Product[];
   coupons: Coupon[];
-  onProductUpdate: (updatedProduct: Product) => void;
-  onProductAdd: (newProduct: Product) => void;
+
   onCouponAdd: (newCoupon: Coupon) => void;
 }
 
-export const AdminPage = ({ products, coupons, onProductUpdate, onProductAdd, onCouponAdd }: Props) => {
+export const AdminPage = ({ coupons, onCouponAdd }: Props) => {
   return (
     <Layout.Container>
       <Layout.Title>관리자 페이지</Layout.Title>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <ProductPanel products={products} onProductUpdate={onProductUpdate} onProductAdd={onProductAdd} />
+        <ProductPanel />
         <CouponPanel coupons={coupons} onCouponAdd={onCouponAdd} />
       </div>
     </Layout.Container>
