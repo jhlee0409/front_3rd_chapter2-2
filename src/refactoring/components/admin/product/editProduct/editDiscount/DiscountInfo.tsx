@@ -1,5 +1,4 @@
 import { useEditProductContext } from "@/refactoring/context/EditProductContext";
-import { removedItemByIndex } from "@/refactoring/lib/array";
 import { percentageToDecimal } from "@/refactoring/lib/math";
 
 const DiscountInfo = () => {
@@ -15,7 +14,7 @@ const DiscountInfo = () => {
       {discounts.map((discount, index) => (
         <div key={index} className="flex justify-between items-center mb-2">
           <span>
-            {discount.quantity}개 이상 구매 시 {percentageToDecimal(discount.rate)}% 할인
+            {discount.quantity}개 이상 구매 시 {discount.rate * 100}% 할인
           </span>
           <button
             onClick={() => handleRemoveDiscount(index)}
