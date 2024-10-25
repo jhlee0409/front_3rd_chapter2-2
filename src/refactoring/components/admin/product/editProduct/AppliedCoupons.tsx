@@ -1,5 +1,4 @@
 import { useEditProductContext } from "@/refactoring/context/EditProductContext";
-import { percentageToDecimal } from "@/refactoring/lib/math";
 import { Product } from "@/types";
 
 type AppliedCouponsProps = {
@@ -13,7 +12,7 @@ const AppliedCoupons = ({ data }: AppliedCouponsProps) => {
       {data.discounts.map((discount, index) => (
         <div key={index} className="mb-2">
           <span>
-            {discount.quantity}개 이상 구매 시 {percentageToDecimal(discount.rate)}% 할인
+            {discount.quantity}개 이상 구매 시 {discount.rate * 100}% 할인
           </span>
         </div>
       ))}
